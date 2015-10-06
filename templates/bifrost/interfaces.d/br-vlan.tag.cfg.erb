@@ -1,0 +1,7 @@
+auto br-vlan<%= @vlan -%>
+iface br-vlan<%= @vlan -%> inet dhcp
+bridge_ports eth2.<%= @vlan -%>
+bridge_hello 2
+bridge_maxage 12
+bridge_stp off
+post-up ip route add default via 15.184.52.1 dev br-vlan<%= @vlan -%>
