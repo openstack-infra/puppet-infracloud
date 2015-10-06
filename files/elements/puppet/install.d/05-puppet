@@ -1,0 +1,4 @@
+#!/bin/bash
+
+wget https://git.openstack.org/cgit/openstack-infra/system-config/plain/install_puppet.sh
+bash -x install_puppet.sh
