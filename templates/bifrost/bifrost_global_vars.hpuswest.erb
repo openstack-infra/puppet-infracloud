@@ -1,0 +1,22 @@
+network_interface: eth2
+node_default_network_interface: eth2
+node_network_info: "{}"
+ipv4_subnet_mask: 255.255.255.192
+ipv4_gateway: <%= @ipaddress_eth2 %>
+ipv4_nameserver: 8.8.8.8
+addressing_mode: "dhcp"
+dhcp_pool_start: 10.10.16.144
+dhcp_pool_end: 10.10.16.190
+inventory_dhcp: true
+dib_os_element: "ubuntu-minimal"
+dib_packages: "openssh-server,vlan,vim,less,bridge-utils"
+dib_trace: true
+extra_dib_elements: "devuser infra-cloud-networking infra"
+mysql_password: <%= @mysql_password %>
+ironic_db_password: <%= @ironic_db_password %>
+dib_env_vars:
+  DIB_INSTALLTYPE_simple_init: repo
+  DIB_DEV_USER_USERNAME: "baremetal"
+  DIB_DEV_USER_PWDLESS_SUDO: "Y"
+  ELEMENTS_PATH: "/opt/stack/diskimage-builder/elements:/opt/stack/elements:/opt/project-config/nodepool/elements"
+extra_kernel_options: intel_iommu=off
