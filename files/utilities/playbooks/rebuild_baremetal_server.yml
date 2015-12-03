@@ -1,0 +1,5 @@
+---
+- hosts: "{{ target }}"
+  gather_facts: no
+  roles:
+  - role: rebuild_baremetal_server

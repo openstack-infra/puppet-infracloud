@@ -85,6 +85,14 @@ class infracloud::bifrost (
     before  => Exec['install bifrost'],
   }
 
+  file { '/opt/stack/utilities':
+    ensure  => directory,
+    recurse => true,
+    source  => 'puppet:///modules/infracloud/utilities',
+    require => Vcsrepo['/opt/stack/bifrost'],
+    before  => Exec['install bifrost'],
+  }
+
   vcsrepo { '/opt/project-config':
     ensure   => 'latest',
     provider => 'git',

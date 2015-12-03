@@ -1,0 +1,3 @@
+---
+- name: Rebuild server on Ironic
+  local_action: command ironic node-set-provision-state "{{ inventory_hostname }}" rebuild
