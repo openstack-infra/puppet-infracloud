@@ -292,9 +292,11 @@ class infracloud::controller(
 
   # keystone user, role, service, endpoints for nova service
   class { '::nova::keystone::auth':
-    password   => $nova_admin_password,
-    public_url => "https://${controller_public_address}:8774/v2/%(tenant_id)s",
-    admin_url  => "https://${controller_public_address}:8774/v2/%(tenant_id)s",
+    password               => $nova_admin_password,
+    public_url             => "https://${controller_public_address}:8774/v2/%(tenant_id)s",
+    admin_url              => "https://${controller_public_address}:8774/v2/%(tenant_id)s",
+    configure_ec2_endpoint => false,
+    configure_endpoint_v3  => false,
   }
 
   # nova.conf neutron credentials
@@ -306,10 +308,11 @@ class infracloud::controller(
   # api service and endpoint-related params in nova.conf
   class { '::nova::api':
     enabled        => true,
-    enabled_apis   => 'osapi_compute,metadata',
+    enabled_apis   => 'osapi_compute',
     admin_password => $nova_admin_password,
     auth_uri       => $keystone_auth_uri,
     identity_uri   => $keystone_admin_uri,
+    osapi_v3       => false,
   }
 
   # conductor service
