@@ -54,7 +54,12 @@ class infracloud::controller(
   ### Database ###
 
   class { '::mysql::server':
-    root_password => $root_mysql_password,
+    root_password    => $root_mysql_password,
+    override_options => {
+      'mysqld' => {
+        'max_connections' => '1024',
+      }
+    }
   }
 
   ### Messaging ###
