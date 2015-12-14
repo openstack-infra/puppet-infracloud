@@ -1,0 +1,11 @@
+Code-Review+2: James E. Blair <corvus@inaugust.com>
+Verified+2: Jenkins
+Code-Review+2: Clark Boylan <cboylan@sapwetik.org>
+Workflow+1: Clark Boylan <cboylan@sapwetik.org>
+Code-Review+1: Matthew Treinish <mtreinish@kortar.org>
+Code-Review+2: yolanda.robla <info@ysoft.biz>
+Submitted-by: Jenkins
+Submitted-at: Mon, 14 Dec 2015 20:05:43 +0000
+Reviewed-on: https://review.openstack.org/256897
+Project: openstack-infra/puppet-infracloud
+Branch: refs/heads/master
