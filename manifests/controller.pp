@@ -124,7 +124,6 @@ class infracloud::controller(
 
   # glance-api.conf
   class { '::glance::api':
-    bind_host           => $controller_public_address,
     database_connection => $glance_database_connection,
     keystone_password   => $glance_admin_password,
     auth_uri            => $keystone_auth_uri,
