@@ -243,7 +243,7 @@ class infracloud::controller(
   }
 
   # Provider network
-  neutron_network { 'provider-net':
+  neutron_network { 'public':
     shared                    => true,
     provider_network_type     => 'flat',
     provider_physical_network => 'provider',
@@ -253,7 +253,7 @@ class infracloud::controller(
   neutron_subnet { 'provider-subnet-53-54-55':
     cidr             => '15.184.52.0/22',
     gateway_ip       => '15.184.52.1',
-    network_name     => 'provider-net',
+    network_name     => 'public',
     allocation_pools => [
                           'start=15.184.53.2,end=15.184.53.254',
                           'start=15.184.54.2,end=15.184.54.254',
