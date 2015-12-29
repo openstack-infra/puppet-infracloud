@@ -14,7 +14,7 @@ infracloud
 Overview
 --------
 
-The infracloud module is a part of [OpenStack-infra](https://github.com/openstack-infra), an effort by the Openstack infrastructure team to provide continuous integration testing and code review for Openstack-infra projects.
+The infracloud module is a part of [OpenStack-infra](https://git.openstack.org/cgit/openstack-infra), an effort by the OpenStack infrastructure team to provide continuous integration testing and code review for OpenStack-infra projects.
 
 Module Description
 ------------------
@@ -62,8 +62,3 @@ Development
 Developer documentation for the entire puppet-infra project.
 
 * http://docs.openstack.org/infra/system-config/puppet.html
-
-Contributors
-------------
-
-* https://github.com/openstack/puppet-infracloud/graphs/contributors
