@@ -258,6 +258,7 @@ class infracloud::controller(
     cidr             => '15.184.52.0/22',
     gateway_ip       => '15.184.52.1',
     network_name     => 'public',
+    dns_nameservers  => ['8.8.8.8'],
     allocation_pools => [
                           'start=15.184.53.2,end=15.184.53.254',
                           'start=15.184.54.2,end=15.184.54.254',
