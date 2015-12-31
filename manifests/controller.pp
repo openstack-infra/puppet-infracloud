@@ -25,6 +25,11 @@ class infracloud::controller(
   $controller_public_address = $::fqdn,
 ) {
 
+  realize (
+    User::Virtual::Localuser['krinkle'],
+    User::Virtual::Localuser['greghaynes'],
+  )
+
   $keystone_auth_uri = "https://${controller_public_address}:5000"
   $keystone_admin_uri = "https://${controller_public_address}:35357"
 

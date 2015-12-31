@@ -6,6 +6,11 @@ class infracloud::compute(
   $controller_management_address,
 ) {
 
+  realize (
+    User::Virtual::Localuser['krinkle'],
+    User::Virtual::Localuser['greghaynes'],
+  )
+
   ### Networking ###
 
   include ::infracloud::veth
