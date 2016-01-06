@@ -14,7 +14,7 @@ infracloud
 Overview
 --------
 
-The infracloud module is a part of [OpenStack-infra](https://git.openstack.org/cgit/openstack-infra), an effort by the OpenStack infrastructure team to provide continuous integration testing and code review for OpenStack-infra projects.
+The infracloud module is a part of [OpenStack-infra](http://docs.openstack.org/infra/system-config/), an effort by the OpenStack infrastructure team to provide continuous integration testing and code review for OpenStack-infra projects.
 
 Module Description
 ------------------
