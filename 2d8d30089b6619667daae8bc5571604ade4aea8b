@@ -1,0 +1,9 @@
+Code-Review+2: Spencer Krum <nibz@spencerkrum.com>
+Code-Review+2: yolanda.robla <info@ysoft.biz>
+Workflow+1: Spencer Krum <nibz@spencerkrum.com>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Thu, 07 Jan 2016 20:50:21 +0000
+Reviewed-on: https://review.openstack.org/262830
+Project: openstack-infra/puppet-infracloud
+Branch: refs/heads/master
