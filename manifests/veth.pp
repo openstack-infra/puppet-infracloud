@@ -1,13 +1,15 @@
 # Create a veth pair to connect the neutron bridge to the vlan bridge
-class infracloud::veth {
+class infracloud::veth (
+  $br_name,
+) {
   exec { 'create veth pair':
     command => '/sbin/ip link add veth1 type veth peer name veth2',
     unless  => '/sbin/ip link show | /bin/grep veth1 && /sbin/ip link show | /bin/grep veth2',
   }
 
   exec { 'attach veth pair':
-    command => '/sbin/brctl addif br-vlan25 veth1',
-    unless  => '/sbin/brctl show br-vlan25 | /bin/grep veth1',
+    command => "/sbin/brctl addif ${br_name} veth1",
+    unless  => "/sbin/brctl show ${br_name} | /bin/grep veth1",
     require => Exec['create veth pair'],
   }
 
