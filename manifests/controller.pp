@@ -26,6 +26,9 @@ class infracloud::controller(
   $br_name,
   $controller_management_address,
   $controller_public_address = $::fqdn,
+  $neutron_subnet_cidr = '192.168.0.0/24', # TODO: once related changes land, this needs to be mandatory (yolanda)
+  $neutron_subnet_gateway = '192.168.0.1', # TODO: once related changes land, this needs to be mandatory (yolanda)
+  $neutron_subnet_allocation_pools = [],
 ) {
 
   $keystone_auth_uri = "https://${controller_public_address}:5000"
@@ -271,16 +274,12 @@ class infracloud::controller(
   }
 
   # Provider subnet with three allication pools representing three "subnets"
-  neutron_subnet { 'provider-subnet-53-54-55':
-    cidr             => '15.184.52.0/22',
-    gateway_ip       => '15.184.52.1',
+  neutron_subnet { 'provider-subnet-infracloud':
+    cidr             => $neutron_subnet_cidr,
+    gateway_ip       => $neutron_subnet_gateway,
     network_name     => 'public',
-    dns_nameservers  => ['8.8.8.8'],
-    allocation_pools => [
-                          'start=15.184.53.2,end=15.184.53.254',
-                          'start=15.184.54.2,end=15.184.54.254',
-                          'start=15.184.55.2,end=15.184.55.254'
-                        ],
+    dns_nameservers  => ['8.8.8.8', ],
+    allocation_pools => $neutron_subnet_allocation_pools,
   }
 
   ### Nova ###
