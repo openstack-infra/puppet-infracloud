@@ -2,9 +2,16 @@
 class infracloud::veth (
   $br_name,
 ) {
+  # create bridge if that not exists
+  exec { 'create bridge':
+    command => "/sbin/brctl addbr ${br_name}",
+    unless  => "/sbin/brctl show ${br_name} | /bin/grep ${br_name}",
+  }
+
   exec { 'create veth pair':
     command => '/sbin/ip link add veth1 type veth peer name veth2',
     unless  => '/sbin/ip link show | /bin/grep veth1 && /sbin/ip link show | /bin/grep veth2',
+    require => Exec['create bridge']
   }
 
   exec { 'attach veth pair':
