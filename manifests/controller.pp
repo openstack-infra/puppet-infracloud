@@ -204,7 +204,7 @@ class infracloud::controller(
     auth_password       => $neutron_admin_password,
     database_connection => "mysql://neutron:${neutron_mysql_password}@127.0.0.1/neutron?charset=utf8",
     sync_db             => true,
-    auth_uri            => $keystone_auth_uri,
+    auth_uri            => "${keystone_auth_uri}/v2.0",
     identity_uri        => $keystone_admin_uri,
   }
 
