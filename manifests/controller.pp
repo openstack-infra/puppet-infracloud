@@ -117,6 +117,7 @@ class infracloud::controller(
     cert_content => $keystone_ssl_cert_file_contents,
     key_path     => $keystone_ssl_key_path,
     cert_path    => $keystone_ssl_cert_path,
+    before       => Class['keystone::endpoint'],
   }
 
   ### Glance ###
@@ -206,6 +207,7 @@ class infracloud::controller(
     sync_db             => true,
     auth_uri            => $keystone_auth_uri,
     identity_uri        => $keystone_admin_uri,
+    auth_url            => "${keystone_auth_uri}/v2.0",
   }
 
   # neutron client package
