@@ -206,6 +206,7 @@ class infracloud::controller(
     sync_db             => true,
     auth_uri            => $keystone_auth_uri,
     identity_uri        => $keystone_admin_uri,
+    auth_uri            => "${keystone_auth_uri}/v2.0",
   }
 
   # neutron client package
