@@ -21,6 +21,7 @@ class infracloud::controller(
   $glance_ssl_cert_file_contents,
   $nova_ssl_key_file_contents,
   $nova_ssl_cert_file_contents,
+  $br_name,
   $controller_management_address,
   $controller_public_address = $::fqdn,
 ) {
@@ -40,7 +41,9 @@ class infracloud::controller(
 
   ### Networking ###
 
-  include ::infracloud::veth
+  class { '::infracloud::veth':
+    br_name => $br_name,
+  }
 
   ### Repos ###
 

@@ -2,13 +2,16 @@ class infracloud::compute(
   $nova_rabbit_password,
   $neutron_rabbit_password,
   $neutron_admin_password,
+  $br_name,
   $controller_public_address,
   $controller_management_address,
 ) {
 
   ### Networking ###
 
-  include ::infracloud::veth
+  class {'::infracloud::veth':
+    br_name => $br_name,
+  }
 
   ### Repos ###
   include ::apt
