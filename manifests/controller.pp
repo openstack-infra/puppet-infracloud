@@ -21,7 +21,8 @@ class infracloud::controller(
   $glance_ssl_cert_file_contents,
   $nova_ssl_key_file_contents,
   $nova_ssl_cert_file_contents,
-  $controller_management_address,
+  $rabbitmq_ssl_key_file_contents,
+  $rabbitmq_ssl_cert_file_contents,
   $controller_public_address = $::fqdn,
 ) {
 
@@ -64,11 +65,24 @@ class infracloud::controller(
 
   ### Messaging ###
 
+  infracloud::ssl { 'rabbitmq':
+    key_content  => $rabbitmq_ssl_key_file_contents,
+    cert_content => $rabbitmq_ssl_cert_file_contents,
+    require      => Package['rabbitmq-server'],
+    before       => Service['rabbitmq-server'],
+  }
+
   class { '::rabbitmq':
     delete_guest_user     => true,
     environment_variables => {
-      'RABBITMQ_NODE_IP_ADDRESS' => $controller_management_address,
-    }
+      'RABBITMQ_NODE_IP_ADDRESS' => '127.0.0.1',
+    },
+    ssl                   => true,
+    ssl_only              => true,
+    ssl_cacert            => '/etc/ssl/certs/controller00.hpuswest.ic.openstack.org-ca.pem',
+    ssl_cert              => '/etc/rabbitmq/ssl/certs/controller00.hpuswest.ic.openstack.org.pem',
+    ssl_key               => '/etc/rabbitmq/ssl/private/controller00.hpuswest.ic.openstack.org.pem',
+    ssl_interface         => $controller_public_address,
   }
 
   ### Keystone ###
@@ -180,7 +194,9 @@ class infracloud::controller(
     enabled         => true,
     rabbit_user     => 'neutron',
     rabbit_password => $neutron_rabbit_password,
-    rabbit_host     => $controller_management_address,
+    rabbit_host     => $controller_public_address,
+    rabbit_port     => '5671',
+    rabbit_use_ssl  => true,
     use_ssl         => true,
     cert_file       => "/etc/neutron/ssl/certs/${controller_public_address}.pem",
     key_file        => "/etc/neutron/ssl/private/${controller_public_address}.pem",
@@ -282,7 +298,9 @@ class infracloud::controller(
     database_connection => "mysql://nova:${nova_mysql_password}@127.0.0.1/nova?charset=utf8",
     rabbit_userid       => 'nova',
     rabbit_password     => $nova_rabbit_password,
-    rabbit_host         => $controller_management_address,
+    rabbit_host         => $controller_public_address,
+    rabbit_port         => '5671',
+    rabbit_use_ssl      => true,
     glance_api_servers  => "https://${controller_public_address}:9292",
     use_ssl             => true,
     cert_file           => "/etc/nova/ssl/certs/${controller_public_address}.pem",

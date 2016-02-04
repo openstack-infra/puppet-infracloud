@@ -3,7 +3,6 @@ class infracloud::compute(
   $neutron_rabbit_password,
   $neutron_admin_password,
   $controller_public_address,
-  $controller_management_address,
 ) {
 
   ### Networking ###
@@ -24,7 +23,9 @@ class infracloud::compute(
   class { '::nova':
     rabbit_userid      => 'nova',
     rabbit_password    => $nova_rabbit_password,
-    rabbit_host        => $controller_management_address,
+    rabbit_host        => $controller_public_address,
+    rabbit_port        => '5671',
+    rabbit_use_ssl     => true,
     glance_api_servers => "https://${controller_public_address}:9292",
   }
 
@@ -46,7 +47,9 @@ class infracloud::compute(
   class { '::neutron':
     rabbit_user     => 'neutron',
     rabbit_password => $neutron_rabbit_password,
-    rabbit_host     => $controller_management_address,
+    rabbit_host     => $controller_public_address,
+    rabbit_port     => '5671',
+    rabbit_use_ssl  => true,
   }
 
   # ML2
