@@ -1,0 +1,5 @@
+#!/bin/bash
+# Adds a flag file with the desired gateway for the bridge
+
+mkdir -p /opt
+echo "$DIB_INFRA_CLOUD_BRIDGE_GATEWAY" > /opt/.bridge_gateway
