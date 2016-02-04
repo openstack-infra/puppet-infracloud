@@ -15,7 +15,6 @@ class infracloud::controller(
   $nova_admin_password,
   $keystone_admin_token,
   $br_name,
-  $controller_management_address,
   $controller_public_address = $::fqdn,
   $ssl_key_file_contents = undef, # TODO(crinkle): make required
   $ssl_cert_file_contents = undef, # TODO(crinkle): make required
@@ -30,6 +29,7 @@ class infracloud::controller(
   $glance_ssl_cert_file_contents = undef,
   $nova_ssl_key_file_contents = undef,
   $nova_ssl_cert_file_contents = undef,
+  $controller_management_address = undef,
 ) {
 
   $keystone_auth_uri = "https://${controller_public_address}:5000"
@@ -70,11 +70,27 @@ class infracloud::controller(
 
   ### Messaging ###
 
+  file { '/etc/rabbitmq/ssl/private':
+    ensure => directory,
+    owner  => 'root',
+    mode   => '0755',
+  }
+
+  infracloud::ssl_key { 'rabbitmq':
+    key_content  => $ssl_key_file_contents,
+    key_path     => "/etc/rabbitmq/ssl/private/${controller_public_address}.pem",
+  }
+
   class { '::rabbitmq':
     delete_guest_user     => true,
     environment_variables => {
-      'RABBITMQ_NODE_IP_ADDRESS' => $controller_management_address,
-    }
+      'RABBITMQ_NODE_IP_ADDRESS' => '127.0.0.1',
+    },
+    ssl                   => true,
+    ssl_only              => true,
+    ssl_cacert            => $ssl_cert_path,
+    ssl_cert              => $ssl_cert_path,
+    ssl_key               => "/etc/rabbitmq/ssl/private/${controller_public_address}.pem",
   }
 
   ### Keystone ###
@@ -97,7 +113,14 @@ class infracloud::controller(
     admin_bind_host     => $controller_public_address,
     rabbit_userid       => 'keystone',
     rabbit_password     => $keystone_rabbit_password,
-    rabbit_host         => $controller_management_address,
+    rabbit_host         => $controller_public_address,
+    rabbit_port         => '5671',
+    rabbit_use_ssl      => true,
+    # Hack to work around a bug in the puppet module
+    # https://review.openstack.org/#/c/280462/
+    kombu_ssl_ca_certs  => [],
+    kombu_ssl_certfile  => [],
+    kombu_ssl_keyfile   => [],
   }
 
   # keystone admin user, projects
@@ -195,7 +218,9 @@ class infracloud::controller(
     enabled         => true,
     rabbit_user     => 'neutron',
     rabbit_password => $neutron_rabbit_password,
-    rabbit_host     => $controller_management_address,
+    rabbit_host     => $controller_public_address,
+    rabbit_port     => '5671',
+    rabbit_use_ssl  => true,
     use_ssl         => true,
     cert_file       => $ssl_cert_path,
     key_file        => "/etc/neutron/ssl/private/${controller_public_address}.pem",
@@ -298,7 +323,9 @@ class infracloud::controller(
     database_connection => "mysql://nova:${nova_mysql_password}@127.0.0.1/nova?charset=utf8",
     rabbit_userid       => 'nova',
     rabbit_password     => $nova_rabbit_password,
-    rabbit_host         => $controller_management_address,
+    rabbit_host         => $controller_public_address,
+    rabbit_port         => '5671',
+    rabbit_use_ssl      => true,
     glance_api_servers  => "https://${controller_public_address}:9292",
     use_ssl             => true,
     cert_file           => $ssl_cert_path,
