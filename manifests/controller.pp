@@ -1,5 +1,7 @@
 # class: OpenStack Infra Cloud
 class infracloud::controller(
+  # TODO (yolanda): Set this to mandatory. But needs to be optional for tests to pass now
+  $keystone_rabbit_password = '',
   $neutron_rabbit_password,
   $nova_rabbit_password,
   $root_mysql_password,
@@ -80,6 +82,10 @@ class infracloud::controller(
     password => $keystone_mysql_password,
   }
 
+  infracloud::rabbitmq_user { 'keystone':
+    password => $keystone_rabbit_password,
+  }
+
   # keystone.conf
   class { '::keystone':
     database_connection => "mysql://keystone:${keystone_mysql_password}@127.0.0.1/keystone",
@@ -88,6 +94,8 @@ class infracloud::controller(
     service_name        => 'httpd',
     enable_ssl          => true,
     admin_bind_host     => $controller_public_address,
+    rabbit_userid       => 'keystone',
+    rabbit_password     => $keystone_rabbit_password,
   }
 
   # keystone admin user, projects
