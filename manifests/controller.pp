@@ -14,31 +14,32 @@ class infracloud::controller(
   $neutron_admin_password,
   $nova_admin_password,
   $keystone_admin_token,
-  $ssl_chain_file_contents,
-  $keystone_ssl_key_file_contents,
-  $keystone_ssl_cert_file_contents,
-  $neutron_ssl_key_file_contents,
-  $neutron_ssl_cert_file_contents,
-  $glance_ssl_key_file_contents,
-  $glance_ssl_cert_file_contents,
-  $nova_ssl_key_file_contents,
-  $nova_ssl_cert_file_contents,
   $br_name,
   $controller_management_address,
   $controller_public_address = $::fqdn,
+  $ssl_key_file_contents = undef, # TODO(crinkle): make required
+  $ssl_cert_file_contents = undef, # TODO(crinkle): make required
+  # Non-functional parameters
+  # TODO(crinkle): remove
+  $ssl_chain_file_contents = undef,
+  $keystone_ssl_key_file_contents = undef,
+  $keystone_ssl_cert_file_contents = undef,
+  $neutron_ssl_key_file_contents = undef,
+  $neutron_ssl_cert_file_contents = undef,
+  $glance_ssl_key_file_contents = undef,
+  $glance_ssl_cert_file_contents = undef,
+  $nova_ssl_key_file_contents = undef,
+  $nova_ssl_cert_file_contents = undef,
 ) {
 
   $keystone_auth_uri = "https://${controller_public_address}:5000"
   $keystone_admin_uri = "https://${controller_public_address}:35357"
+  $ssl_cert_path = '/etc/ssl/certs/openstack_infra_ca.pem'
 
   ### Certificate Chain ###
 
-  # This chain file needs to sign every other cert
-  $ssl_chain_path = "/etc/ssl/certs/${controller_public_address}-ca.pem"
-  file { $ssl_chain_path:
-    ensure  => present,
-    content => $ssl_chain_file_contents,
-    mode    => '0644',
+  class { '::infracloud::cacert':
+    cacert_content => $ssl_cert_file_contents,
   }
 
   ### Networking ###
@@ -115,20 +116,18 @@ class infracloud::controller(
   include ::apache
 
   $keystone_ssl_key_path = "/etc/ssl/private/${controller_public_address}-keystone.pem"
-  $keystone_ssl_cert_path = "/etc/ssl/certs/${controller_public_address}-keystone.pem"
 
   # keystone vhost
   class { '::keystone::wsgi::apache':
     ssl_key   => $keystone_ssl_key_path,
-    ssl_cert  => $keystone_ssl_cert_path,
-    ssl_chain => $ssl_chain_path,
+    ssl_cert  => $ssl_cert_path,
+    subscribe => Class['::infracloud::cacert'],
   }
 
-  infracloud::ssl { 'keystone':
-    key_content  => $keystone_ssl_key_file_contents,
-    cert_content => $keystone_ssl_cert_file_contents,
-    key_path     => $keystone_ssl_key_path,
-    cert_path    => $keystone_ssl_cert_path,
+  infracloud::ssl_key { 'keystone':
+    key_content => $ssl_key_file_contents,
+    key_path    => $keystone_ssl_key_path,
+    notify      => Service['httpd'],
   }
 
   ### Glance ###
@@ -145,14 +144,14 @@ class infracloud::controller(
     keystone_password   => $glance_admin_password,
     auth_uri            => $keystone_auth_uri,
     identity_uri        => $keystone_admin_uri,
-    cert_file           => "/etc/glance/ssl/certs/${controller_public_address}.pem",
+    cert_file           => $ssl_cert_path,
     key_file            => "/etc/glance/ssl/private/${controller_public_address}.pem",
+    subscribe           => Class['::infracloud::cacert'],
   }
 
-  infracloud::ssl { 'glance':
-    key_content  => $glance_ssl_key_file_contents,
-    cert_content => $glance_ssl_cert_file_contents,
-    before       => Service['glance-api'],
+  infracloud::ssl_key { 'glance':
+    key_content => $ssl_key_file_contents,
+    notify      => Service['glance-api'],
   }
 
   # glance-registry.conf
@@ -198,15 +197,15 @@ class infracloud::controller(
     rabbit_password => $neutron_rabbit_password,
     rabbit_host     => $controller_management_address,
     use_ssl         => true,
-    cert_file       => "/etc/neutron/ssl/certs/${controller_public_address}.pem",
+    cert_file       => $ssl_cert_path,
     key_file        => "/etc/neutron/ssl/private/${controller_public_address}.pem",
+    subscribe       => Class['::infracloud::cacert'],
   }
 
-  infracloud::ssl { 'neutron':
-    key_content  => $neutron_ssl_key_file_contents,
-    cert_content => $neutron_ssl_cert_file_contents,
-    before       => Service['neutron-server'],
-    require      => Package['neutron'],
+  infracloud::ssl_key { 'neutron':
+    key_content => $ssl_key_file_contents,
+    notify      => Service['neutron-server'],
+    require     => Package['neutron'],
   }
 
   # keystone user, role, service, endpoints for neutron service
@@ -302,14 +301,14 @@ class infracloud::controller(
     rabbit_host         => $controller_management_address,
     glance_api_servers  => "https://${controller_public_address}:9292",
     use_ssl             => true,
-    cert_file           => "/etc/nova/ssl/certs/${controller_public_address}.pem",
+    cert_file           => $ssl_cert_path,
     key_file            => "/etc/nova/ssl/private/${controller_public_address}.pem",
+    subscribe           => Class['::infracloud::cacert'],
   }
-  infracloud::ssl { 'nova':
-    key_content  => $nova_ssl_key_file_contents,
-    cert_content => $nova_ssl_cert_file_contents,
-    before       => Service['nova-api'],
-    require      => Class['::nova'],
+  infracloud::ssl_key { 'nova':
+    key_content => $ssl_key_file_contents,
+    notify      => Service['nova-api'],
+    require     => Class['::nova'],
   }
 
   # keystone user, role, service, endpoints for nova service
