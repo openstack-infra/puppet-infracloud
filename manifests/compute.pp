@@ -2,10 +2,17 @@ class infracloud::compute(
   $nova_rabbit_password,
   $neutron_rabbit_password,
   $neutron_admin_password,
+  $ssl_cert_file_contents = undef, #TODO: make required
   $br_name,
   $controller_public_address,
   $controller_management_address,
 ) {
+
+  ### Certificate Chain ###
+
+  class { '::infracloud::cacert':
+    cacert_content => $ssl_cert_file_contents,
+  }
 
   ### Networking ###
 
