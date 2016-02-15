@@ -154,6 +154,10 @@ class infracloud::controller(
     identity_uri        => $keystone_admin_uri,
   }
 
+  # set filesystem_store_datadir to /var/lib/glance/images in glance-api.conf
+  # and glance-registry.conf
+  class { '::glance::backend::file': }
+
   # keystone user, role, service, endpoints for glance service
   class { '::glance::keystone::auth':
     password   => $glance_admin_password,
