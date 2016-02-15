@@ -197,6 +197,7 @@ class infracloud::controller(
     key_content  => $neutron_ssl_key_file_contents,
     cert_content => $neutron_ssl_cert_file_contents,
     before       => Service['neutron-server'],
+    require      => Package['neutron'],
   }
 
   # keystone user, role, service, endpoints for neutron service
