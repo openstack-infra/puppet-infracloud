@@ -60,7 +60,7 @@ class infracloud::controller(
     root_password    => $root_mysql_password,
     override_options => {
       'mysqld' => {
-        'max_connections' => '1024',
+        'max_connections' => '512',
       }
     }
   }
