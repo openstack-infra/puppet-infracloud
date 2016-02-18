@@ -26,6 +26,9 @@ class infracloud::controller(
   $br_name,
   $controller_management_address,
   $controller_public_address = $::fqdn,
+  $quota_instances = 10,
+  $quota_cores = 20,
+  $quota_ram = 51200,
 ) {
 
   $keystone_auth_uri = "https://${controller_public_address}:5000"
@@ -305,6 +308,13 @@ class infracloud::controller(
     cert_file           => "/etc/nova/ssl/certs/${controller_public_address}.pem",
     key_file            => "/etc/nova/ssl/private/${controller_public_address}.pem",
   }
+
+  class { '::nova::quota':
+    quota_instances => $quota_instances,
+    quota_cores     => $quota_cores,
+    quota_ram       => $quota_ram,
+  }
+
   infracloud::ssl { 'nova':
     key_content  => $nova_ssl_key_file_contents,
     cert_content => $nova_ssl_cert_file_contents,
