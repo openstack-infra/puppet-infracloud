@@ -30,6 +30,9 @@ class infracloud::controller(
   $glance_ssl_cert_file_contents = undef,
   $nova_ssl_key_file_contents = undef,
   $nova_ssl_cert_file_contents = undef,
+  $quota_instances = 10,
+  $quota_cores = 20,
+  $quota_ram = 51200,
 ) {
 
   $keystone_auth_uri = "https://${controller_public_address}:5000"
@@ -309,6 +312,12 @@ class infracloud::controller(
     key_content => $ssl_key_file_contents,
     notify      => Service['nova-api'],
     require     => Class['::nova'],
+  }
+
+  class { '::nova::quota':
+    quota_instances => $quota_instances,
+    quota_cores     => $quota_cores,
+    quota_ram       => $quota_ram,
   }
 
   # keystone user, role, service, endpoints for nova service
