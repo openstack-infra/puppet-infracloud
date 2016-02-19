@@ -1,0 +1,9 @@
+Code-Review+2: yolanda.robla <info@ysoft.biz>
+Code-Review+2: Jeremy Stanley <fungi@yuggoth.org>
+Workflow+1: Jeremy Stanley <fungi@yuggoth.org>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Fri, 19 Feb 2016 20:09:53 +0000
+Reviewed-on: https://review.openstack.org/279286
+Project: openstack-infra/puppet-infracloud
+Branch: refs/heads/master
