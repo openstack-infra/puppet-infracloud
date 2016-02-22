@@ -102,7 +102,7 @@ class infracloud::controller(
 
   # keystone admin user, projects
   class { '::keystone::roles::admin':
-    email    => 'postmaster@no.test',
+    email    => 'postmaster@example.com',
     password => $keystone_admin_password,
   }
 
