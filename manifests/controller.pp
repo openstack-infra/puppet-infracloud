@@ -30,6 +30,7 @@ class infracloud::controller(
   $glance_ssl_cert_file_contents = undef,
   $nova_ssl_key_file_contents = undef,
   $nova_ssl_cert_file_contents = undef,
+  $neutron_quota_port = 50,
 ) {
 
   $keystone_auth_uri = "https://${controller_public_address}:5000"
@@ -200,6 +201,10 @@ class infracloud::controller(
     cert_file       => $ssl_cert_path,
     key_file        => "/etc/neutron/ssl/private/${controller_public_address}.pem",
     subscribe       => Class['::infracloud::cacert'],
+  }
+
+  class { '::neutron::quota':
+    quota_port => $neutron_quota_port,
   }
 
   infracloud::ssl_key { 'neutron':
