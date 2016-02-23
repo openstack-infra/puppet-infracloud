@@ -159,7 +159,7 @@ class infracloud::bifrost (
       source => 'puppet:///modules/infracloud/dhcp-host.j2',
     }
 
-    file { '/etc/dnsmasq.d/bifrost.dhcp-hosts.vlan${vlan}.d':
+    file { "/etc/dnsmasq.d/bifrost.dhcp-hosts.vlan${vlan}.d":
       ensure  => directory,
       require => Exec['install bifrost'],
     }
@@ -175,7 +175,7 @@ class infracloud::bifrost (
       require     => [
         File['/opt/stack/custom_playbooks/deploy-public-dnsmasq.yaml'],
         File['/opt/stack/custom_playbooks/templates/dhcp-host.j2'],
-        File['/etc/dnsmasq.d/bifrost.dhcp-hosts.vlan${vlan}.d'],
+        File["/etc/dnsmasq.d/bifrost.dhcp-hosts.vlan${vlan}.d"],
       ]
     }
 
