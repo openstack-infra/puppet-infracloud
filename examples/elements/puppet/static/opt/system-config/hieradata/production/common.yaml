@@ -1,0 +1,49 @@
+---
+ironic_db_password: XXX
+bifrost_mysql_password: XXX
+keystone_rabbit_password: XXX
+neutron_rabbit_password: XXX
+nova_rabbit_password: XXX
+keystone_mysql_password: XXX
+glance_mysql_password: XXX
+nova_mysql_password: XXX
+neutron_mysql_password: XXX
+infracloud_mysql_password: XXX
+keystone_admin_password: XXX
+glance_admin_password: XXX
+neutron_admin_password: XXX
+nova_admin_password: XXX
+keystone_admin_token: XXX
+# subject=/C=US/ST=Some-State/O=OpenStack Infra Fake Cert/CN=controller00.hpuswest.ic.openstack.org
+ssl_key_file_contents: |
+  -----BEGIN RSA PRIVATE KEY-----
+  MIICXAIBAAKBgQDQIm6WkLzUTzJEK0T9hLvzPTtywR/doQK+/ItViDNBkm1SqA2A
+  7gORn/eDpryJ4ETi+oSE1Xg54+X3cRnHJN5xeTMGpP6yn/fkEVmdLWJNyox+wC98
+  nWoLYcvWTS+hIy339yA4NMxzXa/Hp168jMu1vsPQDFQDW+4aR62X/06UWwIDAQAB
+  AoGBAJe7UkWflJluduWtaaksN9y2mf0pf3KR66+R6n3bQgqeleY5L0b7vUxPgyDN
+  0ArvnSifmzY/bVs+oirGoBVG8oYT4p/1peKbSc2S78Ugh9CaR/BOtsrfwsUOJoE5
+  +0N0iZO14wOb54AZkcLIC6tDE2FhrywXLaHx6aJHm9u51ovJAkEA8ybpUxSrjR+J
+  MktuS/BnTnTvIB6bk0Gn6CIuZALs9sz6kBKo3b76drOuN9YAarIHABaJIL81LPi+
+  /hZGPoXjTQJBANsh180Gjw8iko+NtWW2izpvTeBWWyU1P9Jwr2pEi6qN4Tc+NGEV
+  J+xLpqyZc28kkA10tiDcDvYi/dgTiY4lskcCQHgARDbUhLXpUnSX9Z9UzidSXpGj
+  iXRresp91BdXukszbpWcH+sQTdw3YUv9OcduhTXt6U9YDo5bVSdhJtnEiiECQEJz
+  lt+j14o9b7h8vr+jhcEos7MOPQGhjkMgzPEq7DfCYsO/515xbfPoVRkOR8Uyj0Sl
+  Wf3I/fiCT/xQoGws3k0CQEgMq/8WNK3c6BG4LviqP2++GNm9mwYvZIz+mDlnjHvR
+  ZbKDbwWy2wYp2n/7WknIQS0o1CmcDXYAYgr4IPgLrfw=
+  -----END RSA PRIVATE KEY-----
+infracloud_hpuswest_ssl_cert_file_contents: |
+  -----BEGIN CERTIFICATE-----
+  MIICZTCCAc4CCQDF0vhjB9rjdTANBgkqhkiG9w0BAQsFADB3MQswCQYDVQQGEwJV
+  UzETMBEGA1UECAwKU29tZS1TdGF0ZTEiMCAGA1UECgwZT3BlblN0YWNrIEluZnJh
+  IEZha2UgQ2VydDEvMC0GA1UEAwwmY29udHJvbGxlcjAwLmhwdXN3ZXN0LmljLm9w
+  ZW5zdGFjay5vcmcwHhcNMTYwMjE1MjI1MTA1WhcNMTcwMjE0MjI1MTA1WjB3MQsw
+  CQYDVQQGEwJVUzETMBEGA1UECAwKU29tZS1TdGF0ZTEiMCAGA1UECgwZT3BlblN0
+  YWNrIEluZnJhIEZha2UgQ2VydDEvMC0GA1UEAwwmY29udHJvbGxlcjAwLmhwdXN3
+  ZXN0LmljLm9wZW5zdGFjay5vcmcwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGB
+  ANAibpaQvNRPMkQrRP2Eu/M9O3LBH92hAr78i1WIM0GSbVKoDYDuA5Gf94OmvIng
+  ROL6hITVeDnj5fdxGcck3nF5Mwak/rKf9+QRWZ0tYk3KjH7AL3ydagthy9ZNL6Ej
+  Lff3IDg0zHNdr8enXryMy7W+w9AMVANb7hpHrZf/TpRbAgMBAAEwDQYJKoZIhvcN
+  AQELBQADgYEAmqKsBH/c53P66zMJaoup8i2t4V+P0TWEVvKoxXMl1I2Cqahk1TZh
+  L2bb8x0gKs7Q8fQ7hWA785JvUBrTMhpqkGkhNERyaVQIhHHwTgzSoOp8Cs+16sy8
+  FzJrVWIctN7qHXhK0r2R+wKEHc+J7FruoLhKGerFrLv4vgsR+rgObrk=
+  -----END CERTIFICATE-----
