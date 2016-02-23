@@ -1,0 +1,9 @@
+---
+- hosts: baremetal
+  connection: local
+  name: "Set up public dnsmasq"
+  become: no
+  tasks:
+  - name: "Set up static dhcp files"
+    template: src=templates/dhcp-host.j2 dest=/etc/dnsmasq.d/bifrost.dhcp-hosts.vlan<%= @vlan -%>.d/{{ inventory_hostname }}
+    delegate_to: localhost
