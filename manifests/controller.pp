@@ -120,7 +120,10 @@ class infracloud::controller(
   }
 
   # apache server
-  include ::apache
+  class { '::apache':
+    # remove default vhost so we can setup logs.
+    default_vhost => false,
+  }
 
   $keystone_ssl_key_path = "/etc/ssl/private/${controller_public_address}-keystone.pem"
 
@@ -348,4 +351,7 @@ class infracloud::controller(
   class { '::nova::scheduler':
     enabled => true,
   }
+
+  ### Logging ###
+  class { '::infracloud::logs': }
 }
