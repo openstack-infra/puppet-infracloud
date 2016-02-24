@@ -1,0 +1,19 @@
+# ************************************
+# Managed by Puppet
+# ************************************
+
+<VirtualHost <%= vhost_name %>:<%= @port %>>
+    DocumentRoot <%= @docroot %>
+    <Directory <%= @docroot %>>
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride None
+        Require all granted
+    </Directory>
+
+    ErrorLog /var/log/<%= scope.lookupvar("::apache::params::apache_name") %>/<%= @name %>_error.log
+    LogLevel warn
+    CustomLog /var/log/<%= scope.lookupvar("::apache::params::apache_name") %>/<%= @name %>_access.log combined
+    ServerSignature Off
+
+    AddType text/plain .log
+</VirtualHost>
