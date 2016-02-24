@@ -120,7 +120,7 @@ class infracloud::controller(
   }
 
   # apache server
-  include ::apache
+  include '::apache'
 
   $keystone_ssl_key_path = "/etc/ssl/private/${controller_public_address}-keystone.pem"
 
@@ -348,4 +348,7 @@ class infracloud::controller(
   class { '::nova::scheduler':
     enabled => true,
   }
+
+  ### Logging ###
+  class { '::infracloud::logs': }
 }
