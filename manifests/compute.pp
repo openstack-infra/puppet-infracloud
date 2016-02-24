@@ -50,6 +50,11 @@ class infracloud::compute(
     neutron_admin_password => $neutron_admin_password,
   }
 
+  # Enhance disk I/O
+  class { '::nova::compute::libvirt':
+    libvirt_disk_cachemodes => 'unsafe',
+  }
+
   ### Neutron ###
 
   # neutron.conf
