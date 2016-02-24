@@ -348,4 +348,7 @@ class infracloud::controller(
   class { '::nova::scheduler':
     enabled => true,
   }
+
+  ### Logging ###
+  class { '::infracloud::logs': }
 }
