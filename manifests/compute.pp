@@ -5,7 +5,9 @@ class infracloud::compute(
   $ssl_cert_file_contents = undef, #TODO: make required
   $br_name,
   $controller_public_address,
-  $controller_management_address,
+  # Non-functional parameters
+  # TODO(crinkle): remove
+  $controller_management_address = undef,
 ) {
 
   ### Certificate Chain ###
@@ -34,7 +36,9 @@ class infracloud::compute(
   class { '::nova':
     rabbit_userid      => 'nova',
     rabbit_password    => $nova_rabbit_password,
-    rabbit_host        => $controller_management_address,
+    rabbit_host        => $controller_public_address,
+    rabbit_port        => '5671',
+    rabbit_use_ssl     => true,
     glance_api_servers => "https://${controller_public_address}:9292",
   }
 
@@ -61,7 +65,9 @@ class infracloud::compute(
   class { '::neutron':
     rabbit_user     => 'neutron',
     rabbit_password => $neutron_rabbit_password,
-    rabbit_host     => $controller_management_address,
+    rabbit_host     => $controller_public_address,
+    rabbit_port     => '5671',
+    rabbit_use_ssl  => true,
   }
 
   # ML2
@@ -75,4 +81,6 @@ class infracloud::compute(
     target => '/usr/bin/neutron-linuxbridge-agent',
     before => Package['neutron-plugin-linuxbridge-agent'],
   }
+  # Fix to make sure linuxbridge-agent can reach rabbit after moving it
+  Neutron_config['oslo_messaging_rabbit/rabbit_hosts'] ~> Service['neutron-plugin-linuxbridge-agent']
 }
