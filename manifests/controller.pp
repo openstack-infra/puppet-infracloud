@@ -1,7 +1,6 @@
 # class: OpenStack Infra Cloud
 class infracloud::controller(
-  # TODO (yolanda): Set this to mandatory. But needs to be optional for tests to pass now
-  $keystone_rabbit_password = 'dummy_pass',
+  $keystone_rabbit_password,
   $neutron_rabbit_password,
   $nova_rabbit_password,
   $root_mysql_password,
