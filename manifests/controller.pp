@@ -28,14 +28,9 @@ class infracloud::controller(
   $glance_ssl_cert_file_contents = undef,
   $nova_ssl_key_file_contents = undef,
   $nova_ssl_cert_file_contents = undef,
-  $neutron_subnet_cidr = '15.184.52.0/22', # TODO: once related changes land, this needs to be mandatory (yolanda)
-  $neutron_subnet_gateway = '15.184.52.1', # TODO: once related changes land, this needs to be mandatory (yolanda)
-  $neutron_subnet_allocation_pools = [     # TODO: once related changes land, this needs to be mandatory (yolanda)
-                                        'start=15.184.53.2,end=15.184.53.254',
-                                        'start=15.184.54.2,end=15.184.54.254',
-                                        'start=15.184.55.2,end=15.184.55.254'
-                                      ],
-  $controller_management_address = undef,
+  $neutron_subnet_cidr,
+  $neutron_subnet_gateway,
+  $neutron_subnet_allocation_pools
 ) {
 
   $keystone_auth_uri = "https://${controller_public_address}:5000"
