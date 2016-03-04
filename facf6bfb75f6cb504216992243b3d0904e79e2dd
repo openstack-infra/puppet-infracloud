@@ -1,0 +1,9 @@
+Code-Review+2: Monty Taylor <mordred@inaugust.com>
+Code-Review+2: yolanda.robla <info@ysoft.biz>
+Workflow+1: yolanda.robla <info@ysoft.biz>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Fri, 04 Mar 2016 08:37:28 +0000
+Reviewed-on: https://review.openstack.org/288194
+Project: openstack-infra/puppet-infracloud
+Branch: refs/heads/master
