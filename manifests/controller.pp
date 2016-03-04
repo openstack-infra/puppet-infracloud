@@ -135,6 +135,7 @@ class infracloud::controller(
   class { '::keystone::endpoint':
     public_url => $keystone_auth_uri,
     admin_url  => $keystone_admin_uri,
+    version    => '',
   }
 
   # apache server
