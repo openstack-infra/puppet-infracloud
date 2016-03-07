@@ -55,7 +55,7 @@ class infracloud::controller(
   include ::apt
 
   class { '::openstack_extras::repo::debian::ubuntu':
-    release         => 'kilo',
+    release         => 'liberty',
     package_require => true,
   }
 
