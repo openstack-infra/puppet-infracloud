@@ -15,23 +15,11 @@ class infracloud::controller(
   $keystone_admin_token,
   $br_name,
   $controller_public_address = $::fqdn,
-  $ssl_key_file_contents = undef, # TODO(crinkle): make required
-  $ssl_cert_file_contents = undef, # TODO(crinkle): make required
-  # Non-functional parameters
-  # TODO(crinkle): remove
-  $ssl_chain_file_contents = undef,
-  $keystone_ssl_key_file_contents = undef,
-  $keystone_ssl_cert_file_contents = undef,
-  $neutron_ssl_key_file_contents = undef,
-  $neutron_ssl_cert_file_contents = undef,
-  $glance_ssl_key_file_contents = undef,
-  $glance_ssl_cert_file_contents = undef,
-  $nova_ssl_key_file_contents = undef,
-  $nova_ssl_cert_file_contents = undef,
+  $ssl_key_file_contents,
+  $ssl_cert_file_contents,
   $neutron_subnet_cidr,
   $neutron_subnet_gateway,
   $neutron_subnet_allocation_pools,
-  $controller_management_address = undef,
 ) {
 
   $keystone_auth_uri = "https://${controller_public_address}:5000"
