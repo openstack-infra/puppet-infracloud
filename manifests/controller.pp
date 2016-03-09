@@ -18,21 +18,9 @@ class infracloud::controller(
   $nova_mysql_password,
   $nova_rabbit_password,
   $root_mysql_password,
-  $controller_management_address   = undef,
-  $controller_public_address       = $::fqdn,
-  $glance_ssl_cert_file_contents   = undef,
-  $glance_ssl_key_file_contents    = undef,
-  $keystone_ssl_cert_file_contents = undef,
-  $keystone_ssl_key_file_contents  = undef,
-  $neutron_ssl_cert_file_contents  = undef,
-  $neutron_ssl_key_file_contents   = undef,
-  $nova_ssl_cert_file_contents     = undef,
-  $nova_ssl_key_file_contents      = undef,
-  # Non-functional parameters
-  # TODO(crinkle): remove
-  $ssl_cert_file_contents          = undef, # TODO(crinkle): make required
-  $ssl_chain_file_contents         = undef,
-  $ssl_key_file_contents           = undef, # TODO(crinkle): make required
+  $ssl_key_file_contents,
+  $ssl_cert_file_contents,
+  $controller_public_address = $::fqdn,
 ) {
 
   $keystone_auth_uri = "https://${controller_public_address}:5000"
