@@ -1,0 +1,66 @@
+#/bin/bash -ex
+cleanup()
+{
+  if [ "$?" -ne 0 ] ; then
+    echo "FAILED"
+  fi
+  if openstack image list | grep cirros ; then
+    openstack image delete cirros
+  fi
+  if openstack keypair list | grep controller ; then
+    openstack keypair delete controller
+  fi
+  if openstack server list | grep test ; then
+    openstack server delete test
+  fi
+}
+
+export OS_TENANT_NAME='openstack' 
+export OS_USERNAME='admin' 
+export OS_PASSWORD='XXX'
+export OS_AUTH_URL='https://controller00.hpuswest.ic.openstack.org:5000/v3'
+export OS_PROJECT_DOMAIN_NAME=default
+export OS_USER_DOMAIN_NAME=default
+export OS_IDENTITY_API_VERSION=3
+export OS_AUTH_TYPE=v3password
+
+trap cleanup EXIT
+
+openstack project list
+openstack user list
+openstack service list
+openstack endpoint list
+
+nova list
+nova image-list
+nova flavor-list
+nova keypair-list
+
+if nova service-list | grep down ; then
+  exit 1
+fi
+
+glance image-list
+
+neutron net-list
+neutron subnet-list
+
+openstack image create --copy-from http://download.cirros-cloud.net/0.3.1/cirros-0.3.1-x86_64-disk.img \
+                       --public \
+                       --container-format bare \
+                       --disk-format qcow2 \
+                       cirros
+sleep 3
+openstack image list --long | grep cirros | grep active
+
+if [ ! -e ~/.ssh/id_rsa.pub ] ; then
+  ssh-keygen -f ~/.ssh/id_rsa -q -N ""
+fi
+nova keypair-add --pub-key ~/.ssh/id_rsa.pub controller
+nova keypair-list
+
+nova boot --flavor 1 --image cirros --key-name controller test
+sleep 8
+nova list | grep test | grep ACTIVE
+
+echo "Success!"
