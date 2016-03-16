@@ -9,6 +9,8 @@ class infracloud::compute(
   $ssl_cert_file_contents,
 ) {
 
+  $ssl_cert_path = '/etc/ssl/certs/openstack_infra_ca.pem'
+
   ### Certificate Chain ###
 
   class { '::infracloud::cacert':
@@ -39,6 +41,9 @@ class infracloud::compute(
     rabbit_port        => '5671',
     rabbit_use_ssl     => true,
     glance_api_servers => "https://${controller_public_address}:9292",
+    use_ssl            => true,
+    cert_file          => $ssl_cert_path,
+    key_file           => "/etc/nova/ssl/private/${controller_public_address}.pem",
   }
 
   # nova-compute service
@@ -62,11 +67,16 @@ class infracloud::compute(
 
   # neutron.conf
   class { '::neutron':
+    core_plugin     => 'ml2',
+    enabled         => true,
     rabbit_user     => 'neutron',
     rabbit_password => $neutron_rabbit_password,
     rabbit_host     => $controller_public_address,
     rabbit_port     => '5671',
     rabbit_use_ssl  => true,
+    use_ssl         => true,
+    cert_file       => $ssl_cert_path,
+    key_file        => "/etc/neutron/ssl/private/${controller_public_address}.pem",
   }
 
   # ML2
