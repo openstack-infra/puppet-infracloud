@@ -7,6 +7,7 @@ class infracloud::compute(
   $neutron_rabbit_password,
   $nova_rabbit_password,
   $ssl_cert_file_contents,
+  $virt_type = 'kvm',
 ) {
 
   $ssl_cert_path = '/etc/ssl/certs/openstack_infra_ca.pem'
@@ -58,9 +59,12 @@ class infracloud::compute(
     neutron_admin_password => $neutron_admin_password,
   }
 
-  # Enhance disk I/O
+  # Libvirt parameters
   class { '::nova::compute::libvirt':
+    # Enhance disk I/O
     libvirt_disk_cachemodes => ['file=unsafe'],
+    # KVM in prod, qemu in tests
+    libvirt_virt_type       => $virt_type,
   }
 
   ### Neutron ###
