@@ -311,6 +311,9 @@ class infracloud::controller(
 
   ### Nova ###
 
+  class { '::nova::db':
+    database_connection => "mysql://nova:${nova_mysql_password}@127.0.0.1/nova?charset=utf8",
+  }
   class { '::nova::db::mysql':
     password => $nova_mysql_password,
     host     => '127.0.0.1',
@@ -322,17 +325,16 @@ class infracloud::controller(
 
   # nova.conf - general
   class { '::nova':
-    database_connection => "mysql://nova:${nova_mysql_password}@127.0.0.1/nova?charset=utf8",
-    rabbit_userid       => 'nova',
-    rabbit_password     => $nova_rabbit_password,
-    rabbit_host         => $controller_public_address,
-    rabbit_port         => '5671',
-    rabbit_use_ssl      => true,
-    glance_api_servers  => "https://${controller_public_address}:9292",
-    use_ssl             => true,
-    cert_file           => $ssl_cert_path,
-    key_file            => "/etc/nova/ssl/private/${controller_public_address}.pem",
-    subscribe           => Class['::infracloud::cacert'],
+    rabbit_userid      => 'nova',
+    rabbit_password    => $nova_rabbit_password,
+    rabbit_host        => $controller_public_address,
+    rabbit_port        => '5671',
+    rabbit_use_ssl     => true,
+    glance_api_servers => "https://${controller_public_address}:9292",
+    use_ssl            => true,
+    cert_file          => $ssl_cert_path,
+    key_file           => "/etc/nova/ssl/private/${controller_public_address}.pem",
+    subscribe          => Class['::infracloud::cacert'],
   }
   infracloud::ssl_key { 'nova':
     key_content => $ssl_key_file_contents,
@@ -351,6 +353,7 @@ class infracloud::controller(
 
   # nova.conf neutron credentials
   class { '::nova::network::neutron':
+    neutron_admin_auth_url => "https://${controller_public_address}:35357/v2.0",
     neutron_admin_password => $neutron_admin_password,
     neutron_url            => "https://${controller_public_address}:9696",
   }
