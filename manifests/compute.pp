@@ -5,6 +5,7 @@ class infracloud::compute(
   $ssl_cert_file_contents = undef, #TODO: make required
   $br_name,
   $controller_public_address,
+  $virt_type = 'kvm',
   # Non-functional parameters
   # TODO(crinkle): remove
   $controller_management_address = undef,
@@ -59,9 +60,12 @@ class infracloud::compute(
     neutron_admin_password => $neutron_admin_password,
   }
 
-  # Enhance disk I/O
+  # Libvirt parameters
   class { '::nova::compute::libvirt':
+    # Enhance disk I/O
     libvirt_disk_cachemodes => ['file=unsafe'],
+    # KVM in prod, qemu in tests
+    libvirt_virt_type       => $virt_type,
   }
 
   ### Neutron ###
