@@ -1,8 +1,9 @@
-# class: OpenStack Infra Logs
+# Class: OpenStack Infra Logs
+#
 class infracloud::logs(
-  $port = '80',
+  $docroot    = '/var/www/logs',
+  $port       = '80',
   $vhost_name = $::fqdn,
-  $docroot = '/var/www/logs',
 ) {
   include ::apache
 

@@ -1,37 +1,38 @@
-# class: OpenStack Infra Cloud
+# Class: OpenStack Infra Cloud
+#
 class infracloud::controller(
-  $keystone_rabbit_password,
-  $neutron_rabbit_password,
-  $nova_rabbit_password,
-  $root_mysql_password,
-  $keystone_mysql_password,
-  $glance_mysql_password,
-  $neutron_mysql_password,
-  $nova_mysql_password,
-  $glance_admin_password,
-  $keystone_admin_password,
-  $neutron_admin_password,
-  $nova_admin_password,
-  $keystone_admin_token,
   $br_name,
-  $controller_public_address = $::fqdn,
-  $ssl_key_file_contents = undef, # TODO(crinkle): make required
-  $ssl_cert_file_contents = undef, # TODO(crinkle): make required
-  # Non-functional parameters
-  # TODO(crinkle): remove
-  $ssl_chain_file_contents = undef,
-  $keystone_ssl_key_file_contents = undef,
-  $keystone_ssl_cert_file_contents = undef,
-  $neutron_ssl_key_file_contents = undef,
-  $neutron_ssl_cert_file_contents = undef,
-  $glance_ssl_key_file_contents = undef,
-  $glance_ssl_cert_file_contents = undef,
-  $nova_ssl_key_file_contents = undef,
-  $nova_ssl_cert_file_contents = undef,
+  $glance_admin_password,
+  $glance_mysql_password,
+  $keystone_admin_password,
+  $keystone_admin_token,
+  $keystone_mysql_password,
+  $keystone_rabbit_password,
+  $neutron_admin_password,
+  $neutron_mysql_password,
+  $neutron_rabbit_password,
+  $neutron_subnet_allocation_pools,
   $neutron_subnet_cidr,
   $neutron_subnet_gateway,
-  $neutron_subnet_allocation_pools,
-  $controller_management_address = undef,
+  $nova_admin_password,
+  $nova_mysql_password,
+  $nova_rabbit_password,
+  $root_mysql_password,
+  $controller_management_address   = undef,
+  $controller_public_address       = $::fqdn,
+  $glance_ssl_cert_file_contents   = undef,
+  $glance_ssl_key_file_contents    = undef,
+  $keystone_ssl_cert_file_contents = undef,
+  $keystone_ssl_key_file_contents  = undef,
+  $neutron_ssl_cert_file_contents  = undef,
+  $neutron_ssl_key_file_contents   = undef,
+  $nova_ssl_cert_file_contents     = undef,
+  $nova_ssl_key_file_contents      = undef,
+  # Non-functional parameters
+  # TODO(crinkle): remove
+  $ssl_cert_file_contents          = undef, # TODO(crinkle): make required
+  $ssl_chain_file_contents         = undef,
+  $ssl_key_file_contents           = undef, # TODO(crinkle): make required
 ) {
 
   $keystone_auth_uri = "https://${controller_public_address}:5000"
