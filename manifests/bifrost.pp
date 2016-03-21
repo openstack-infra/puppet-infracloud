@@ -13,15 +13,15 @@
 # under the License.
 #
 class infracloud::bifrost (
-  $ironic_inventory,
+  $gateway_ip,
+  $ipmi_passwords,
   $ironic_db_password,
+  $ironic_inventory,
   $mysql_password,
   $region,
-  $ipmi_passwords,
-  $ssh_public_key,
   $ssh_private_key,
+  $ssh_public_key,
   $vlan,
-  $gateway_ip,
 ) {
 
   # The configdrive bifrost task defaults to copying the user's local public

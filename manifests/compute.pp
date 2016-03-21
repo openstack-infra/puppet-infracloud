@@ -1,13 +1,15 @@
+#Class infracloud::compute
+#
 class infracloud::compute(
-  $nova_rabbit_password,
-  $neutron_rabbit_password,
-  $neutron_admin_password,
-  $ssl_cert_file_contents = undef, #TODO: make required
   $br_name,
   $controller_public_address,
+  $neutron_admin_password,
+  $neutron_rabbit_password,
+  $nova_rabbit_password,
   # Non-functional parameters
   # TODO(crinkle): remove
   $controller_management_address = undef,
+  $ssl_cert_file_contents        = undef, #TODO: make required
 ) {
 
   ### Certificate Chain ###
