@@ -28,7 +28,7 @@ class infracloud::compute(
   include ::apt
 
   class { '::openstack_extras::repo::debian::ubuntu':
-    release         => 'liberty',
+    release         => 'mitaka',
     package_require => true,
   }
 
@@ -55,7 +55,7 @@ class infracloud::compute(
   # nova.conf neutron credentials
   class { '::nova::network::neutron':
     neutron_url            => "https://${controller_public_address}:9696",
-    neutron_admin_auth_url => "https://${controller_public_address}:35357/v2.0",
+    neutron_admin_auth_url => "https://${controller_public_address}:35357/v3",
     neutron_admin_password => $neutron_admin_password,
   }
 

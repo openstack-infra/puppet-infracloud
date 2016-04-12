@@ -44,7 +44,7 @@ class infracloud::controller(
   include ::apt
 
   class { '::openstack_extras::repo::debian::ubuntu':
-    release         => 'liberty',
+    release         => 'mitaka',
     package_require => true,
   }
 
@@ -143,6 +143,7 @@ class infracloud::controller(
     key_content => $ssl_key_file_contents,
     key_path    => $keystone_ssl_key_path,
     notify      => Service['httpd'],
+    require     => Package['keystone'],
   }
 
   ### Glance ###
@@ -167,6 +168,7 @@ class infracloud::controller(
   infracloud::ssl_key { 'glance':
     key_content => $ssl_key_file_contents,
     notify      => Service['glance-api'],
+    require     => Package['glance-api'],
   }
 
   # glance-registry.conf
@@ -234,11 +236,13 @@ class infracloud::controller(
 
   # neutron-server service and related neutron.conf and api-paste.conf params
   class { '::neutron::server':
-    auth_password       => $neutron_admin_password,
+    #auth_password       => $neutron_admin_password,
+    password       => $neutron_admin_password,
     database_connection => "mysql://neutron:${neutron_mysql_password}@127.0.0.1/neutron?charset=utf8",
     sync_db             => true,
     auth_uri            => $keystone_auth_uri,
-    identity_uri        => $keystone_admin_uri,
+    auth_url            => $keystone_admin_uri,
+    #identity_uri        => $keystone_admin_uri,
   }
 
   # neutron client package
@@ -246,11 +250,8 @@ class infracloud::controller(
 
   # neutron.conf nova credentials
   class { '::neutron::server::notifications':
-    nova_url               => "https://${controller_public_address}:8774/v2",
-    nova_admin_auth_url    => "${keystone_admin_uri}/v2.0",
-    nova_admin_username    => 'nova',
-    nova_admin_password    => $nova_admin_password,
-    nova_admin_tenant_name => 'services',
+    auth_url => $keystone_admin_uri,
+    password => $nova_admin_password,
   }
 
   # ML2
@@ -300,9 +301,14 @@ class infracloud::controller(
   ### Nova ###
 
   class { '::nova::db':
-    database_connection => "mysql://nova:${nova_mysql_password}@127.0.0.1/nova?charset=utf8",
+    database_connection     => "mysql://nova:${nova_mysql_password}@127.0.0.1/nova?charset=utf8",
+    api_database_connection => "mysql://nova_api:${nova_mysql_password}@127.0.0.1/nova_api?charset=utf8"
   }
   class { '::nova::db::mysql':
+    password => $nova_mysql_password,
+    host     => '127.0.0.1',
+  }
+  class { '::nova::db::mysql_api':
     password => $nova_mysql_password,
     host     => '127.0.0.1',
   }
@@ -341,8 +347,8 @@ class infracloud::controller(
 
   # nova.conf neutron credentials
   class { '::nova::network::neutron':
-    neutron_admin_auth_url => "https://${controller_public_address}:35357/v2.0",
-    neutron_admin_password => $neutron_admin_password,
+    neutron_auth_url => "${keystone_admin_uri}/v3",
+    neutron_password => $neutron_admin_password,
     neutron_url            => "https://${controller_public_address}:9696",
   }
 
