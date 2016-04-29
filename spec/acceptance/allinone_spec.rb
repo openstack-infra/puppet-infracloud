@@ -105,7 +105,7 @@ describe 'allinone', :if => os[:family] == 'ubuntu' do
   end
 
   it 'should be able to upload an image' do
-    command = 'openstack image create \
+    command = 'OS_IMAGE_API_VERSION=1 openstack image create \
       --copy-from http://download.cirros-cloud.net/0.3.1/cirros-0.3.1-x86_64-disk.img \
       --public \
       --container-format bare \
