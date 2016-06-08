@@ -1,0 +1,3 @@
+<% @ironic_deployed_inventory = @ironic_inventory.reject { |k,v| v['disabled'] } -%>
+<% @ironic_deployed_inventory.each { |k,v| v['driver_info']['power']['ipmi_password'] = @ipmi_passwords[v['driver_info']['power']['ipmi_address']] } -%>
+<%= JSON.pretty_generate(@ironic_deployed_inventory) %>
