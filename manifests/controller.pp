@@ -70,6 +70,7 @@ class infracloud::controller(
   infracloud::ssl_key { 'rabbitmq':
     key_content => $ssl_key_file_contents,
     key_path    => "/etc/rabbitmq/ssl/private/${controller_public_address}.pem",
+    require     => Package['rabbitmq-server'],
   }
 
   class { '::rabbitmq':
@@ -143,6 +144,7 @@ class infracloud::controller(
     key_content => $ssl_key_file_contents,
     key_path    => $keystone_ssl_key_path,
     notify      => Service['httpd'],
+    require     => Package['keystone'],
   }
 
   ### Glance ###
@@ -167,6 +169,7 @@ class infracloud::controller(
   infracloud::ssl_key { 'glance':
     key_content => $ssl_key_file_contents,
     notify      => Service['glance-api'],
+    require     => Package['glance-api'],
   }
 
   # glance-registry.conf
