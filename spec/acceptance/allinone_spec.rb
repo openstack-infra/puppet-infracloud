@@ -113,10 +113,16 @@ describe 'allinone', :if => os[:family] == 'ubuntu' do
       cirros'
     result = shell("#{credentials} #{command}")
     expect(result.exit_code).to eq(0)
-    sleep(10) # command returns immediately but image needs time to upload
-    result = shell("#{credentials} openstack image list --long")
-    expect(result.stdout).to match(/cirros.*active/)
-    expect(result.exit_code).to eq(0)
+    list_command = "#{credentials} openstack image list --long"
+    timeout = 60
+    end_time = Time.now + timeout
+    image_list = shell(list_command)
+    while image_list.stdout =~ /saving/ && Time.now() < end_time
+      sleep(10)
+      image_list = shell(list_command)
+    end
+    expect(image_list.stdout).to match(/cirros.*active/)
+    expect(image_list.exit_code).to eq(0)
   end
 
   it 'should be able to upload a keypair' do
