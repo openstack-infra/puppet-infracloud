@@ -113,7 +113,7 @@ describe 'allinone', :if => os[:family] == 'ubuntu' do
       cirros'
     result = shell("#{credentials} #{command}")
     expect(result.exit_code).to eq(0)
-    sleep(10) # command returns immediately but image needs time to upload
+    sleep(20) # command returns immediately but image needs time to upload
     result = shell("#{credentials} openstack image list --long")
     expect(result.stdout).to match(/cirros.*active/)
     expect(result.exit_code).to eq(0)
