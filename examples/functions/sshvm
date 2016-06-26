@@ -10,8 +10,10 @@ sshvm() {
   local vm_name=$1
   shift
   local vm_mac=$(virsh dumpxml $vm_name | grep -m 1 'mac address' | cut -d "'" -f 2)
+  echo "mac is $vm_mac"
   local vm_ip=$(arp -n | grep -m 1 $vm_mac | cut -d ' ' -f 1)
   local tries=2
+  echo "ip is $vm_ip"
   while [ $tries -ge 0 ] ; do
     if [ -n "$vm_ip" ] ; then
       local error=$(ssh_cmd $vm_ip true 2>&1) # Check for connection refused and try again
