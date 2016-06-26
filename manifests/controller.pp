@@ -21,6 +21,7 @@ class infracloud::controller(
   $ssl_key_file_contents,
   $ssl_cert_file_contents,
   $controller_public_address = $::fqdn,
+  $openstack_release = 'mitaka',
 ) {
 
   $keystone_auth_uri = "https://${controller_public_address}:5000"
@@ -40,12 +41,35 @@ class infracloud::controller(
   }
 
   ### Repos ###
+  ### Repos ###
+  case $::osfamily {
+    'Debian': {
+      include ::apt
 
-  include ::apt
-
-  class { '::openstack_extras::repo::debian::ubuntu':
-    release         => 'mitaka',
-    package_require => true,
+      case $::operatingsystem {
+        'Ubuntu': {
+          class { '::openstack_extras::repo::debian::ubuntu':
+            release         => $openstack_release,
+            package_require => true,
+          }
+        }
+        'Debian': {
+          class { '::openstack_extras::repo::debian::debian':
+            release         => $openstack_release,
+            package_require => true,
+          }
+        }
+      }
+    }
+    'RedHat': {
+       class { '::openstack_extras::repo::redhat::redhat':
+         release         => $openstack_release,
+         package_require => true,
+       }
+    }
+    default: {
+      fail("Unsupported osfamily: ${::osfamily} The 'infracloud' module only supports osfamily Debian or RedHat.")
+    }
   }
 
   ### Database ###

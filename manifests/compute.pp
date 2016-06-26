@@ -8,6 +8,7 @@ class infracloud::compute(
   $nova_rabbit_password,
   $ssl_cert_file_contents,
   $virt_type = 'kvm',
+  $openstack_release = 'mitaka',
 ) {
 
   $ssl_cert_path = '/etc/ssl/certs/openstack_infra_ca.pem'
@@ -25,11 +26,34 @@ class infracloud::compute(
   }
 
   ### Repos ###
-  include ::apt
+  case $::osfamily {
+    'Debian': {
+      include ::apt
 
-  class { '::openstack_extras::repo::debian::ubuntu':
-    release         => 'mitaka',
-    package_require => true,
+      case $::operatingsystem {
+        'Ubuntu': {
+          class { '::openstack_extras::repo::debian::ubuntu':
+            release         => $openstack_release,
+            package_require => true,
+          }
+        }
+        'Debian': {
+          class { '::openstack_extras::repo::debian::debian':
+            release         => $openstack_release,
+            package_require => true,
+          }
+        }
+      }
+    }
+    'RedHat': {
+       class { '::openstack_extras::repo::redhat::redhat':
+         release         => $openstack_release,
+         package_require => true,
+       }
+    }
+    default: {
+      fail("Unsupported osfamily: ${::osfamily} The 'infracloud' module only supports osfamily Debian or RedHat.")
+    }
   }
 
   ### Nova ###
