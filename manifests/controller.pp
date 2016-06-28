@@ -131,6 +131,12 @@ class infracloud::controller(
   # apache server
   include ::apache
 
+  file { '/etc/ssl/private':
+    ensure => directory,
+    owner  => 'root',
+    mode   => '0710',
+  }
+
   $keystone_ssl_key_path = "/etc/ssl/private/${controller_public_address}-keystone.pem"
 
   # keystone vhost
@@ -138,13 +144,14 @@ class infracloud::controller(
     ssl_key   => $keystone_ssl_key_path,
     ssl_cert  => $ssl_cert_path,
     subscribe => Class['::infracloud::cacert'],
+    require   => File['/etc/ssl/private'],
   }
 
   infracloud::ssl_key { 'keystone':
     key_content => $ssl_key_file_contents,
     key_path    => $keystone_ssl_key_path,
     notify      => Service['httpd'],
-    require     => Package['keystone'],
+    require     => [ Package['keystone'], File['/etc/ssl/private'] ],
   }
 
   ### Glance ###
