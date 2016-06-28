@@ -25,7 +25,7 @@ class infracloud::controller(
 
   $keystone_auth_uri = "https://${controller_public_address}:5000"
   $keystone_admin_uri = "https://${controller_public_address}:35357"
-  $ssl_cert_path = '/etc/ssl/certs/openstack_infra_ca.pem'
+  $ssl_cert_path = '/usr/local/share/ca-certificates/openstack_infra_ca.crt'
 
   ### Certificate Chain ###
 
@@ -83,6 +83,7 @@ class infracloud::controller(
     ssl_cacert            => $ssl_cert_path,
     ssl_cert              => $ssl_cert_path,
     ssl_key               => "/etc/rabbitmq/ssl/private/${controller_public_address}.pem",
+    require               => File[$ssl_cert_path],
   }
 
   ### Keystone ###

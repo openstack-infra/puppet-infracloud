@@ -10,7 +10,7 @@ class infracloud::compute(
   $virt_type = 'kvm',
 ) {
 
-  $ssl_cert_path = '/etc/ssl/certs/openstack_infra_ca.pem'
+  $ssl_cert_path = '/usr/local/share/ca-certificates/openstack_infra_ca.crt'
 
   ### Certificate Chain ###
 
