@@ -83,6 +83,7 @@ class infracloud::controller(
     ssl_cacert            => $ssl_cert_path,
     ssl_cert              => $ssl_cert_path,
     ssl_key               => "/etc/rabbitmq/ssl/private/${controller_public_address}.pem",
+    require               => File[$ssl_cert_path],
   }
 
   ### Keystone ###
