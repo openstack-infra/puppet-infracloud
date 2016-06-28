@@ -2,6 +2,13 @@
 class infracloud::cacert (
   $cacert_content,
 ) {
+  file { '/usr/local/share/ca-certificates':
+    ensure => 'directory',
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0755',
+  }
+
   file { '/usr/local/share/ca-certificates/openstack_infra_ca.crt':
     ensure  => present,
     owner   => 'root',
@@ -9,6 +16,7 @@ class infracloud::cacert (
     mode    => '0444',
     content =>  $cacert_content,
     replace => true,
+    require => File['/usr/local/share/ca-certificates'],
   }
 
   exec { 'update-ca-certificates':
