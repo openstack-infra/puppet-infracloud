@@ -7,10 +7,14 @@ class infracloud::veth (
     unless  => '/sbin/ip link show | /bin/grep veth1 && /sbin/ip link show | /bin/grep veth2',
   }
 
+  package { 'bridge-utils':
+    ensure => present,
+  }
+
   exec { 'attach veth pair':
     command => "/sbin/brctl addif ${br_name} veth1",
     unless  => "/sbin/brctl show ${br_name} | /bin/grep veth1",
-    require => Exec['create veth pair'],
+    require => [ Exec['create veth pair'], Package['bridge-utils'] ]
   }
 
   exec { 'turn on veth1':
