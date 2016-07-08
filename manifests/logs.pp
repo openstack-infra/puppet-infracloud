@@ -38,5 +38,7 @@ class infracloud::logs(
   }
 
   # Temporary workaround until https://github.com/puppetlabs/puppetlabs-apache/pull/1388 is merged and released
-  File[$::apache::mod_enable_dir] -> Exec["syntax verification for ${vhost_name}"]
+  if $::apache::mod_enable_dir != undef {
+    File[$::apache::mod_enable_dir] -> Exec["syntax verification for ${vhost_name}"]
+  }
 }
