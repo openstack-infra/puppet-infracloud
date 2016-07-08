@@ -201,8 +201,8 @@ class infracloud::controller(
 
   infracloud::ssl_key { 'glance':
     key_content => $ssl_key_file_contents,
-    notify      => Service['glance-api'],
-    require     => Package['glance-api'],
+    notify      => Service[$::glance::params::api_service_name],
+    require     => Package[$::glance::params::api_package_name],
   }
 
   # glance-registry.conf
