@@ -41,7 +41,9 @@ class infracloud::bifrost (
     before  => Exec['install bifrost'],
   }
 
-  include ::ansible
+  class { '::ansible':
+    ansible_version => '2.1.1.0',
+  }
 
   class { '::mysql::server':
     root_password => $mysql_password,
