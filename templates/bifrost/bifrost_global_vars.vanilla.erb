@@ -12,7 +12,7 @@ inventory_dhcp_static_ip: true
 dib_os_element: "ubuntu-minimal"
 dib_packages: "openssh-server,vlan,vim,less,bridge-utils,language-pack-en,iputils-ping,rsyslog"
 dib_trace: true
-extra_dib_elements: "devuser infra-cloud-networking puppet growroot"
+extra_dib_elements: "devuser infra-cloud-bridge puppet growroot"
 mysql_password: <%= @mysql_password %>
 ironic_db_password: <%= @ironic_db_password %>
 dib_env_vars:
