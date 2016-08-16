@@ -24,8 +24,8 @@ from glean import systemlock
 from glean.cmd import get_config_drive_interfaces, get_sys_interfaces
 
 
-def configure_bridge(interface, interface_name, bridge_name, vlan_raw_device):
-    if interface['vlan_id']:
+def configure_bridge(interface, interface_name, bridge_name, vlan_raw_device=None):
+    if 'vlan_id' in interface:
         vlan_content = 'vlan-raw-device %s' % vlan_raw_device
     else:
         vlan_content = ''
@@ -110,13 +110,15 @@ def main():
     # generate bridge name
     if 'vlan_id' in interface:
         bridge_name = 'br-vlan%s' % interface['vlan_id']
-    else:
-        bridge_name = 'br-eth'
 
-    # only configure bridge if not exists
-    if not os.path.exists('/sys/class/net/%s' % bridge_name):
-        configure_bridge(interface, interface_name,
-                         bridge_name, vlan_raw_device)
+        # only configure bridge if not exists
+        if not os.path.exists('/sys/class/net/%s' % bridge_name):
+            configure_bridge(interface, interface_name,
+                             'br-vlan%s' % interface['vlan_id'],
+                             vlan_raw_device)
+    else:
+            configure_bridge(interface, interface_name,
+                             'br-%s' % interface_name)
 
 if __name__ == '__main__':
     with systemlock.Lock('/tmp/glean.lock'):
