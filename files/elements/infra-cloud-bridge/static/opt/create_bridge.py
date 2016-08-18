@@ -94,8 +94,13 @@ def main():
         sys.exit(0)
 
     interfaces = get_config_drive_interfaces(network_info)
-    interface = interfaces[interfaces.keys()[0]]
-    interface_name = sys_interfaces[interfaces.keys()[0]]
+    if len(interfaces) == 1:
+        interface = interfaces[interfaces.keys()[0]]
+        interface_name = sys_interfaces[interface['id']]
+    else:
+        interface = interfaces[[i for i in interfaces.keys()
+                                if 'vlan_id' in interfaces[i]][0]]
+        interface_name = sys_interfaces[interface['mac_address']]
 
     if 'vlan_id' in interface:
         if interface['vlan_id'] in interface_name:
