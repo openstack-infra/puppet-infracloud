@@ -112,18 +112,16 @@ def main():
         interface_name = "{0}.{1}".format(
             vlan_raw_device, interface['vlan_id'])
 
-    # generate bridge name
-    if 'vlan_id' in interface:
         bridge_name = 'br-vlan%s' % interface['vlan_id']
 
         # only configure bridge if not exists
         if not os.path.exists('/sys/class/net/%s' % bridge_name):
             configure_bridge(interface, interface_name,
-                             'br-vlan%s' % interface['vlan_id'],
-                             vlan_raw_device)
+                             bridge_name, vlan_raw_device)
     else:
-            configure_bridge(interface, interface_name,
-                             'br-%s' % interface_name)
+        bridge_name = 'br-%s' % interface_name
+        if not os.path.exists('/sys/class/net/%s' % bridge_name):
+            configure_bridge(interface, interface_name, bridge_name)
 
 if __name__ == '__main__':
     with systemlock.Lock('/tmp/glean.lock'):
