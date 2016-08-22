@@ -7,6 +7,7 @@ class infracloud::compute(
   $neutron_rabbit_password,
   $nova_rabbit_password,
   $ssl_cert_file_contents,
+  $ssl_key_file_contents = undef, # TEMPORARILY SET KEY TO UNDEF TO ALLOW PUPPET TO PASS
   $virt_type = 'kvm',
   $openstack_release = 'mitaka',
 ) {
@@ -72,6 +73,13 @@ class infracloud::compute(
     use_ssl            => true,
     cert_file          => $ssl_cert_path,
     key_file           => "/etc/nova/ssl/private/${controller_public_address}.pem",
+  }
+
+  infracloud::ssl_key { 'nova':
+    key_path    => "/etc/nova/ssl/private/${controller_public_address}.pem",
+    key_content => $ssl_key_file_contents,
+    notify      => Service['nova-compute'],
+    require     => Class['::nova'],
   }
 
   # nova-compute service
