@@ -7,7 +7,7 @@ class infracloud::compute(
   $neutron_rabbit_password,
   $nova_rabbit_password,
   $ssl_cert_file_contents,
-  $ssl_key_file_contents = undef, # TEMPORARILY SET KEY TO UNDEF TO ALLOW PUPPET TO PASS
+  $ssl_key_file_contents,
   $virt_type = 'kvm',
   $openstack_release = 'mitaka',
 ) {
