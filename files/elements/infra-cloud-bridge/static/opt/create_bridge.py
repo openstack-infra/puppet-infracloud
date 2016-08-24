@@ -17,6 +17,7 @@
 
 import json
 import os
+import platform
 import subprocess
 import sys
 
@@ -24,20 +25,31 @@ from glean import systemlock
 from glean.cmd import get_config_drive_interfaces, get_sys_interfaces
 
 
-def configure_bridge(interface, interface_name, bridge_name, vlan_raw_device=None):
+def configure_bridge_debian(interface, interface_name, bridge_name, vlan_raw_device=None):
     if 'vlan_id' in interface:
         vlan_content = 'vlan-raw-device %s' % vlan_raw_device
     else:
         vlan_content = ''
 
     network_file = '/etc/network/interfaces.d/%s.cfg' % interface_name
+    bridge_file = '/etc/network/interfaces.d/%s.cfg' % bridge_name
 
-    # generate content depending on data
-    file_content = """
+    # generate interface content depending on data
+    interface_file_content = """
 auto {net_name}
 iface {net_name} inet manual
 {vlan_content}
+"""
 
+    interface_file_content = interface_file_content.format(
+        net_name=interface_name,
+        vlan_content=vlan_content)
+
+    with open(network_file, 'w') as target_file:
+        target_file.write(interface_file_content)
+
+    # generate bridge content depending on data
+    bridge_file_content = """
 auto {bridge_name}
 iface {bridge_name} inet static
     bridge_ports {net_name}
@@ -48,19 +60,18 @@ iface {bridge_name} inet static
     netmask {netmask}
     gateway {gateway}
     dns-nameservers {nameservers}
-
 """
 
-    file_content = file_content.format(
-        net_name=interface_name, vlan_content=vlan_content,
+    bridge_file_content = bridge_file_content.format(
         bridge_name=bridge_name,
+        net_name=inteface_name,
         ipv4_address=interface['ip_address'],
         netmask=interface['netmask'],
         gateway=interface['routes'][0]['gateway'],
         nameservers=' '.join(interface['dns_nameservers']))
 
-    with open(network_file, 'w') as target_file:
-        target_file.write(file_content)
+    with open(bridge_file, 'w') as target_file:
+        target_file.write(bridge_file_content)
 
     # turn down pre-existing interface and start the bridge
     # because at this point, glean has already configured
@@ -79,6 +90,9 @@ class MockArgs(object):
 
 def main():
     network_info_file = '/mnt/config/openstack/latest/network_info.json'
+
+    # detect the platform where we are
+    distro = platform.dist()[0].lower()
 
     params = MockArgs()
     setattr(params, 'root', '/')
@@ -116,12 +130,21 @@ def main():
 
         # only configure bridge if not exists
         if not os.path.exists('/sys/class/net/%s' % bridge_name):
-            configure_bridge(interface, interface_name,
-                             bridge_name, vlan_raw_device)
+            if distro in ('debian', 'ubuntu'):
+                configure_bridge_debian(interface, interface_name,
+                                        bridge_name, vlan_raw_device)
+            else:
+                configure_bridge_rh(interface, interface_name,
+                                    bridge_name, vlan_raw_device)
     else:
         bridge_name = 'br-%s' % interface_name
         if not os.path.exists('/sys/class/net/%s' % bridge_name):
-            configure_bridge(interface, interface_name, bridge_name)
+            if distro in ('debian', 'ubuntu'):
+                configure_bridge_debian(interface, interface_name,
+                                        bridge_name)
+            else:
+                configure_bridge_rh(interface, interface_name,
+                                    bridge_name)
 
 if __name__ == '__main__':
     with systemlock.Lock('/tmp/glean.lock'):
