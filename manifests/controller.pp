@@ -26,7 +26,9 @@ class infracloud::controller(
 
   $keystone_auth_uri = "https://${controller_public_address}:5000"
   $keystone_admin_uri = "https://${controller_public_address}:35357"
-  $ssl_cert_path = '/usr/local/share/ca-certificates/openstack_infra_ca.crt'
+
+  include ::infracloud::params
+  $ssl_cert_path = "${::infracloud::params::cert_path}/openstack_infra_ca.crt"
 
   ### Certificate Chain ###
 
