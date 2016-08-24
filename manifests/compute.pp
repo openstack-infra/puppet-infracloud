@@ -75,16 +75,24 @@ class infracloud::compute(
     key_file           => "/etc/nova/ssl/private/${controller_public_address}.pem",
   }
 
+  file { '/etc/nova/ssl':
+    ensure  => directory,
+    owner   => 'root',
+    mode    => '0755',
+    require => Class['::nova'],
+  }
+
   file { '/etc/nova/ssl/private':
-    ensure => directory,
-    owner  => 'root',
-    mode   => '0755',
+    ensure  => directory,
+    owner   => 'root',
+    mode    => '0755',
+    require => File['/etc/nova/ssl'],
   }
 
   infracloud::ssl_key { 'nova':
     key_path    => "/etc/nova/ssl/private/${controller_public_address}.pem",
     key_content => $ssl_key_file_contents,
-    require     => [ Class['::nova'], File['/etc/nova/ssl/private'] ]
+    require     => File['/etc/nova/ssl/private'],
   }
 
   # nova-compute service
