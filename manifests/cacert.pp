@@ -2,61 +2,30 @@
 class infracloud::cacert (
   $cacert_content,
 ) {
-  case $::osfamily {
-    'Debian': {
-      file { '/usr/local/share/ca-certificates':
-        ensure => 'directory',
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0755',
-      }
+  include ::infracloud::params
 
-      file { '/usr/local/share/ca-certificates/openstack_infra_ca.crt':
-        ensure  => present,
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0444',
-        content =>  $cacert_content,
-        replace => true,
-        require => File['/usr/local/share/ca-certificates'],
-      }
+  file { $::infracloud::params::cert_path:
+    ensure => 'directory',
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0755',
+  }
 
-      exec { 'update-ca-certificates':
-        command     => '/usr/sbin/update-ca-certificates',
-        subscribe   => [
-          File['/usr/local/share/ca-certificates/openstack_infra_ca.crt'],
-        ],
-        refreshonly => true,
-      }
-    }
-    'Redhat': {
-      file { '/etc/pki/ca-trust/source/anchors':
-        ensure => 'directory',
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0755',
-      }
+  file { "${::infracloud::params::cert_path}/openstack_infra_ca.crt":
+    ensure  => present,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0444',
+    content =>  $cacert_content,
+    replace => true,
+    require => File[$::infracloud::params::cert_path],
+  }
 
-      file { '/etc/pki/ca-trust/source/anchors/openstack_infra_ca.crt':
-        ensure  => present,
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0444',
-        content =>  $cacert_content,
-        replace => true,
-        require => File['/etc/pki/ca-trust/source/anchors'],
-      }
-
-      exec { 'update-ca-certificates':
-        command     => '/usr/bin/update-ca-trust',
-        subscribe   => [
-          File['/etc/pki/ca-trust/source/anchors/openstack_infra_ca.crt'],
-        ],
-        refreshonly => true,
-      }
-    }
-    default: {
-      fail("Unsupported osfamily: ${::osfamily}. Only RedHat and Debian families are supported")
-    }
+  exec { 'update-ca-certificates':
+    command     => $::infracloud::params::cert_command,
+    subscribe   => [
+        File["${::infracloud::params::cert_path}/openstack_infra_ca.crt"],
+      ],
+      refreshonly => true,
   }
 }
