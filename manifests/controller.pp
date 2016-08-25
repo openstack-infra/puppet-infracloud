@@ -68,6 +68,12 @@ class infracloud::controller(
         release         => $openstack_release,
         package_require => true,
       }
+
+      package { 'erlang':
+        ensure => present,
+        before => Class['::rabbitmq'],
+      }
+
     }
     default: {
       fail("Unsupported osfamily: ${::osfamily} The 'infracloud' module only supports osfamily Debian or RedHat.")
