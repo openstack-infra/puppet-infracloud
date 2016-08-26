@@ -42,7 +42,7 @@ class infracloud::controller(
     br_name => $br_name,
   }
 
-  ### Repos ###
+  ### Repos and selinux ###
   case $::osfamily {
     'Debian': {
       include ::apt
@@ -76,6 +76,9 @@ class infracloud::controller(
         before => Class['::rabbitmq'],
       }
 
+      class { '::selinux':
+        mode   => 'permissive',
+      }
     }
     default: {
       fail("Unsupported osfamily: ${::osfamily} The 'infracloud' module only supports osfamily Debian or RedHat.")
