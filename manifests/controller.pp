@@ -42,7 +42,7 @@ class infracloud::controller(
     br_name => $br_name,
   }
 
-  ### Repos ###
+  ### Repos and selinux ###
   case $::osfamily {
     'Debian': {
       include ::apt
@@ -69,6 +69,10 @@ class infracloud::controller(
       class { '::openstack_extras::repo::redhat::redhat':
         release         => $openstack_release,
         package_require => true,
+      }
+
+      class { 'selinux':
+        mode   => 'permissive',
       }
     }
     default: {
