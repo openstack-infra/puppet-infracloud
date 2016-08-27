@@ -3,7 +3,7 @@ class infracloud::params {
   case $::osfamily {
     'Debian': {
       $cert_path = '/usr/local/share/ca-certificates'
-      $cert_command = '/usr/bin/update-ca-certificates'
+      $cert_command = '/usr/sbin/update-ca-certificates'
     }
     'Redhat': {
       $cert_path = '/etc/pki/ca-trust/source/anchors'
