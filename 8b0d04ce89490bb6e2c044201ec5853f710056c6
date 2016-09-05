@@ -1,0 +1,8 @@
+Code-Review+2: yolanda.robla <yroblamo@redhat.com>
+Workflow+1: yolanda.robla <yroblamo@redhat.com>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Mon, 05 Sep 2016 12:56:02 +0000
+Reviewed-on: https://review.openstack.org/361290
+Project: openstack-infra/puppet-infracloud
+Branch: refs/heads/master
