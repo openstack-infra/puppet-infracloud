@@ -134,13 +134,7 @@ DNS={nameservers}
     with open(bridge_file, 'w') as target_file:
         target_file.write(bridge_file_content)
 
-    # turn down pre-existing interface and start the bridge
-    # because at this point, glean has already configured
-    # previous interface that needs to be overriden.
-    # This will only happen at first time that the bridge
-    # is configured, because on reboots, we won't reach this
-    # configure_bridge method
-    subprocess.call(['ifdown', interface_name])
+    # start the bridge at first boot
     subprocess.call(['ifup', bridge_name])
 
 
