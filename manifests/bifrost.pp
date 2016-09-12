@@ -100,7 +100,7 @@ class infracloud::bifrost (
     content => template('infracloud/bifrost/interfaces.d/eth2.tag.cfg.erb'),
     require => File['/opt/stack/elements'],
   }
-  file { "/opt/stack/elements/infra-cloud-networking/static/etc/network/interfaces.d/br-vlan${vlan}.cfg":
+  file { "/opt/stack/elements/infra-cloud-networking/static/etc/network/interfaces.d/br_infracloud.cfg":
     ensure  => file,
     content => template('infracloud/bifrost/interfaces.d/br-vlan.tag.cfg.erb'),
     require => File['/opt/stack/elements'],

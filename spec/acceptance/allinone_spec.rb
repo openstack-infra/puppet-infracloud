@@ -14,10 +14,10 @@ describe 'allinone', :if => os[:family] == 'ubuntu' do
     shell('echo -e "auto eth0.2\niface eth0.2 inet manual\n" >> /etc/network/interfaces')
     shell('modprobe 8021q')
     shell('ifup eth0.2')
-    shell('brctl addbr br-vlan2')
-    shell('brctl addif br-vlan2 eth0.2')
-    shell('ip addr add 10.1.0.42/255.255.240.0 dev br-vlan2')
-    shell('ip link set dev br-vlan2 up')
+    shell('brctl addbr br_infracloud')
+    shell('brctl addif br_infracloud eth0.2')
+    shell('ip addr add 10.1.0.42/255.255.240.0 dev br_infracloud')
+    shell('ip link set dev br_infracloud up')
 
     # set hostname
     shell('echo 127.0.1.1 infracloud.local infracloud >> /etc/hosts')
