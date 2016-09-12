@@ -1,6 +1,7 @@
 [Unit]
 Description=Create bridge for infra cloud
 After=glean@.service network.target network-online.target
+Wants=newtork-online.target
 
 [Service]
 Type=oneshot
