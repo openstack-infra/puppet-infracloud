@@ -18,7 +18,6 @@ class infracloud::bifrost (
   $ironic_db_password,
   $ironic_inventory,
   $mysql_password,
-  $region = 'vanilla',
   $ssh_private_key,
   $ssh_public_key,
   $vlan,
