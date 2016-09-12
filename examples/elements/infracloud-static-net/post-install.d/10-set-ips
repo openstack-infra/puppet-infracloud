@@ -22,8 +22,8 @@ auto eth2.25
 iface eth2.25 inet manual
 vlan-raw-device eth2
 
-auto br-vlan25
-iface br-vlan25 inet static
+auto br_infracloud
+iface br_infracloud inet static
 address $ip
 netmask 255.255.255.0
 gateway 192.168.25.1

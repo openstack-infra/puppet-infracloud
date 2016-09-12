@@ -1,0 +1,7 @@
+auto <%= @bridge_name %>
+iface <%= @bridge_name %> inet dhcp
+bridge_ports eth2.<%= @vlan -%>
+bridge_hello 2
+bridge_maxage 12
+bridge_stp off
+post-up ip route add default via <%= @gateway_ip -%> dev <%= @bridge_name %>
