@@ -100,7 +100,8 @@ class infracloud::compute(
 
   # nova-compute service
   class { '::nova::compute':
-    enabled => true,
+    enabled          => true,
+    force_raw_images => false,
   }
 
   # nova.conf neutron credentials
@@ -117,6 +118,12 @@ class infracloud::compute(
     libvirt_disk_cachemodes => ['file=unsafe'],
     # KVM in prod, qemu in tests
     libvirt_virt_type       => $virt_type,
+  }
+
+  # NOTE(pabelanger): This is needed for force_raw_images to work. Otherwise
+  # nova will still convert images to raw.
+  nova_config {
+    'libvirt/images_type': value => 'qcow2';
   }
 
   ### Neutron ###
