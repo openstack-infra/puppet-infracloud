@@ -18,7 +18,6 @@ class infracloud::bifrost (
   $ironic_db_password,
   $ironic_inventory,
   $mysql_password,
-  $region,
   $ssh_private_key,
   $ssh_public_key,
   $vlan,
@@ -62,12 +61,12 @@ class infracloud::bifrost (
 
   file { '/etc/bifrost/bifrost_global_vars':
     ensure  => present,
-    content => template("infracloud/bifrost/bifrost_global_vars.${region}.erb"),
+    content => template('infracloud/bifrost/bifrost_global_vars.erb'),
   }
 
   file { '/opt/stack/baremetal.json':
     ensure  => file,
-    content => template("infracloud/bifrost/inventory.${region}.json.erb"),
+    content => template('infracloud/bifrost/inventory.json.erb'),
     require => Vcsrepo['/opt/stack/bifrost'],
   }
 
