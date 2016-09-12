@@ -100,7 +100,8 @@ class infracloud::compute(
 
   # nova-compute service
   class { '::nova::compute':
-    enabled => true,
+    enabled          => true,
+    force_raw_images => false,
   }
 
   # nova.conf neutron credentials
