@@ -21,6 +21,7 @@ class infracloud::bifrost (
   $ssh_private_key,
   $ssh_public_key,
   $vlan,
+  $brigde_name = 'br-vlan2551',
   $default_network_interface = 'eth2',
   $dhcp_pool_start = '10.10.16.144',
   $dhcp_pool_end = '10.10.16.190',
@@ -88,12 +89,17 @@ class infracloud::bifrost (
     subscribe   => Vcsrepo['/opt/stack/bifrost'],
   }
 
-  file { '/opt/stack/elements':
-    ensure  => directory,
-    recurse => true,
-    source  => 'puppet:///modules/infracloud/elements',
-    require => Vcsrepo['/opt/stack/bifrost'],
-    before  => Exec['install bifrost'],
+  file { ['/opt/stack/elements', '/opt/stack/elements/infra-cloud-bridge',
+          '/opt/stack/elements/infra-cloud-bridge/static',
+          '/opt/stack/elements/infra-cloud-bridge/static/opt' ]:
+    ensure => directory,
+    before => Exec['install bifrost']
+  }
+
+  file { '/opt/stack/elements/infra-cloud-bridge/static/opt/create_bridge.py':
+    ensure  => present,
+    content => template('infracloud/bifrost/create_bridge.py.erb'),
+    require => File['/opt/stack/elements'],
   }
 
   exec { 'install bifrost':
