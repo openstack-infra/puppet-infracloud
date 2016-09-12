@@ -182,7 +182,10 @@ def main():
         interface_name = "{0}.{1}".format(
             vlan_raw_device, interface['vlan_id'])
 
-        bridge_name = 'br-vlan%s' % interface['vlan_id']
+        if distro in ('debian', 'ubuntu'):
+            bridge_name = 'br-vlan%s' % interface['vlan_id']
+        else:
+            bridge_name = 'br_vlan%s' % interface['vlan_id']
 
         # only configure bridge if not exists
         if not os.path.exists('/sys/class/net/%s' % bridge_name):
@@ -193,7 +196,11 @@ def main():
                 configure_bridge_rh(interface, interface_name,
                                     bridge_name, vlan_raw_device)
     else:
-        bridge_name = 'br-%s' % interface_name
+        if distro in ('debian', 'ubuntu'):
+            bridge_name = 'br-%s' % interface_name
+        else:
+            bridge_name = 'br_%s' % interface_name
+
         if not os.path.exists('/sys/class/net/%s' % bridge_name):
             if distro in ('debian', 'ubuntu'):
                 configure_bridge_debian(interface, interface_name,
