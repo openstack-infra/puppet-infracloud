@@ -91,7 +91,7 @@ port=0
 # specified interfaces (and the loopback) give the name of the
 # interface (eg eth0) here.
 # Repeat the line for more than one interface.
-interface=br-vlan<%= @vlan %>
+interface=<%= @bridge_name %>
 # Or you can specify which interface _not_ to listen on
 #except-interface=
 except-interface=lo

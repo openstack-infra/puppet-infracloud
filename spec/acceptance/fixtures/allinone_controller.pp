@@ -49,7 +49,7 @@ class { '::infracloud::controller':
   keystone_admin_token             => 'XXX',
   ssl_key_file_contents            => $ssl_key_file_contents,
   ssl_cert_file_contents           => $ssl_cert_file_contents,
-  br_name                          => 'br-vlan2',
+  br_name                          => 'br_infracloud',
   controller_public_address        => 'infracloud.local',
   neutron_subnet_cidr              => '10.1.0.0/24',
   neutron_subnet_gateway           => '10.1.0.1',
