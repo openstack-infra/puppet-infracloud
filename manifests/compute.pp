@@ -12,7 +12,8 @@ class infracloud::compute(
   $openstack_release = 'mitaka',
 ) {
 
-  $ssl_cert_path = '/usr/local/share/ca-certificates/openstack_infra_ca.crt'
+  include ::infracloud::params
+  $ssl_cert_path = "${::infracloud::params::cert_path}/openstack_infra_ca.crt"
 
   ### Certificate Chain ###
 
