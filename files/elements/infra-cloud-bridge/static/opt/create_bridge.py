@@ -64,7 +64,7 @@ iface {bridge_name} inet static
 
     bridge_file_content = bridge_file_content.format(
         bridge_name=bridge_name,
-        net_name=inteface_name,
+        net_name=interface_name,
         ipv4_address=interface['ip_address'],
         netmask=interface['netmask'],
         gateway=interface['routes'][0]['gateway'],
