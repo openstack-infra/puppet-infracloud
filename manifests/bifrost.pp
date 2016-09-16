@@ -88,22 +88,6 @@ class infracloud::bifrost (
     before  => Exec['install bifrost'],
   }
 
-  file { '/opt/stack/elements/infra-cloud-networking/static/etc/network/interfaces.d/eth2.cfg':
-    ensure  => file,
-    content => template('infracloud/bifrost/interfaces.d/eth2.cfg.erb'),
-    require => File['/opt/stack/elements'],
-  }
-  file { "/opt/stack/elements/infra-cloud-networking/static/etc/network/interfaces.d/eth2.${vlan}.cfg":
-    ensure  => file,
-    content => template('infracloud/bifrost/interfaces.d/eth2.tag.cfg.erb'),
-    require => File['/opt/stack/elements'],
-  }
-  file { "/opt/stack/elements/infra-cloud-networking/static/etc/network/interfaces.d/br-vlan${vlan}.cfg":
-    ensure  => file,
-    content => template('infracloud/bifrost/interfaces.d/br-vlan.tag.cfg.erb'),
-    require => File['/opt/stack/elements'],
-  }
-
   exec { 'install bifrost':
     environment => ['BIFROST_INVENTORY_SOURCE=/opt/stack/baremetal.json', 'HOME=/root'],
     command     => "ansible-playbook -e @/etc/bifrost/bifrost_global_vars -vvvv \
