@@ -1,13 +1,13 @@
-network_interface: eth2
-node_default_network_interface: eth2
+network_interface: <%= @network_interface %>
+node_default_network_interface: <%= @default_network_interface %>
 node_network_info: "{}"
 disable_dnsmasq_dns: true
-ipv4_subnet_mask: 255.255.224.0
-ipv4_gateway: 15.184.64.1
-ipv4_nameserver: 8.8.8.8
-vlan_id: 2551
-dhcp_pool_start: 10.10.16.144
-dhcp_pool_end: 10.10.16.190
+ipv4_subnet_mask: <%= @ipv4_subnet_mask %>
+ipv4_gateway: <%= @ipv4_gateway %>
+ipv4_nameserver: <%= @ipv4_nameserver %>
+vlan_id: <%= @vlan %>
+dhcp_pool_start: <%= @dhcp_pool_start %>
+dhcp_pool_end: <%= @dhcp_pool_end %>
 inventory_dhcp: true
 inventory_dhcp_static_ip: true
 dib_os_element: "ubuntu-minimal"

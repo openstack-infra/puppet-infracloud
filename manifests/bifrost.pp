@@ -21,6 +21,14 @@ class infracloud::bifrost (
   $ssh_private_key,
   $ssh_public_key,
   $vlan,
+  $default_network_interface = 'eth2',
+  $dhcp_pool_start = '10.10.16.144',
+  $dhcp_pool_end = '10.10.16.190',
+  $network_interface = 'eth2',
+  $ipv4_gateway = '15.184.64.1',
+  $ipv4_nameserver = '8.8.8.8',
+  $ipv4_subnet_mask = '255.255.224.0',
+
 ) {
   include ::infracloud::params
 
