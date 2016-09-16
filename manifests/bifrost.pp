@@ -22,6 +22,7 @@ class infracloud::bifrost (
   $ssh_public_key,
   $vlan,
 ) {
+  include ::infracloud::params
 
   # The configdrive bifrost task defaults to copying the user's local public
   # ssh key. Let's make sure it's there so that bifrost doesn't error and so we
@@ -40,8 +41,10 @@ class infracloud::bifrost (
     before  => Exec['install bifrost'],
   }
 
+  ensure_packages($::infracloud::params::bifrost_req_packages)
   class { '::ansible':
     ansible_version => '2.1.1.0',
+    require         => Package[$::infracloud::params::bifrost_req_packages],
   }
 
   class { '::mysql::server':
