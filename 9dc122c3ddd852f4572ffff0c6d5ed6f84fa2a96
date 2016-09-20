@@ -1,0 +1,9 @@
+Code-Review+2: Ricardo Carrillo Cruz <ricardo.carrillo.cruz@gmail.com>
+Code-Review+2: James E. Blair <corvus@inaugust.com>
+Workflow+1: James E. Blair <corvus@inaugust.com>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Tue, 20 Sep 2016 15:26:25 +0000
+Reviewed-on: https://review.openstack.org/368955
+Project: openstack-infra/puppet-infracloud
+Branch: refs/heads/master
