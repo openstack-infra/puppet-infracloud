@@ -9,7 +9,7 @@ class infracloud::params {
     'Redhat': {
       $cert_path = '/etc/pki/ca-trust/source/anchors'
       $cert_command = '/usr/bin/update-ca-trust'
-      $bifrost_req_packages = [ 'gcc', 'openssl-devel' ]
+      $bifrost_req_packages = [ 'gcc', 'openssl-devel', 'libselinux-python' ]
     }
     default: {
         fail('Only Debian and RedHat distros are supported.')
