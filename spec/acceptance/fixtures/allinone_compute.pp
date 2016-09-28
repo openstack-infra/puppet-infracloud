@@ -23,7 +23,7 @@ class { '::infracloud::compute':
   neutron_rabbit_password       => 'XXX',
   neutron_admin_password        => 'XXX',
   ssl_cert_file_contents        => $ssl_cert_file_contents,
-  br_name                       => 'br-vlan2',
+  br_name                       => 'br_infracloud',
   controller_public_address     => 'infracloud.local',
   virt_type                     => 'qemu',
 }
