@@ -166,7 +166,7 @@ def main():
     interfaces = get_config_drive_interfaces(network_info)
     if len(interfaces) == 1:
         interface = interfaces[interfaces.keys()[0]]
-        interface_name = sys_interfaces[interface['id']]
+        interface_name = sys_interfaces[interface['id'].replace('ipv4-', '')]
     else:
         interface = interfaces[[i for i in interfaces.keys()
                                 if 'vlan_id' in interfaces[i]][0]]
