@@ -30,7 +30,7 @@ class infracloud::bifrost (
   $ipv4_gateway = '15.184.64.1',
   $ipv4_nameserver = '8.8.8.8',
   $ipv4_subnet_mask = '255.255.224.0',
-
+  $dib_dev_user_password = undef,
 ) {
   include ::infracloud::params
 
