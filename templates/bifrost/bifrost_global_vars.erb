@@ -19,6 +19,9 @@ ironic_db_password: <%= @ironic_db_password %>
 dib_env_vars:
   DIB_INSTALLTYPE_simple_init: repo
   DIB_DEV_USER_USERNAME: "baremetal"
+<% if @dib_dev_user_password != nil %>
+  DIB_DEV_USER_PASSWORD: "<=% @dib_dev_user_password -%>"
+<% end %>
   DIB_DEV_USER_PWDLESS_SUDO: "Y"
   ELEMENTS_PATH: "/opt/stack/elements:/opt/project-config/nodepool/elements"
 extra_kernel_options: intel_iommu=off
