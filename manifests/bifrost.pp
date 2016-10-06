@@ -36,11 +36,18 @@ class infracloud::bifrost (
   # The configdrive bifrost task defaults to copying the user's local public
   # ssh key. Let's make sure it's there so that bifrost doesn't error and so we
   # can log in to nodes from the baremetal host.
+  file { '/root/.ssh':
+    ensure => directory,
+    mode   => '0700',
+    owner  => 'root',
+  }
+
   file { '/root/.ssh/id_rsa':
     ensure  => present,
     mode    => '0600',
     content => $ssh_private_key,
     before  => Exec['install bifrost'],
+    require => File['/root/.ssh'],
   }
 
   file { '/root/.ssh/id_rsa.pub':
@@ -48,6 +55,7 @@ class infracloud::bifrost (
     mode    => '0644',
     content => $ssh_public_key,
     before  => Exec['install bifrost'],
+    require => File['/root/.ssh'],
   }
 
   ensure_packages($::infracloud::params::bifrost_req_packages)
