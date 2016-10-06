@@ -97,10 +97,16 @@ class infracloud::bifrost (
     before  => Exec['install bifrost'],
   }
 
+  file { [ '/opt/stack/elements/infra-cloud-bridge/static',
+           '/opt/stack/elements/infra-cloud-bridge/static/opt']:
+    ensure  => directory,
+    require => File['/opt/stack/elements'],
+  }
+
   file { '/opt/stack/elements/infra-cloud-bridge/static/opt/create_bridge.py':
     ensure  => present,
     content => template('infracloud/bifrost/create_bridge.py.erb'),
-    require => File['/opt/stack/elements'],
+    require => File['/opt/stack/elements/infra-cloud-bridge/static/opt'],
     before  => Exec['install bifrost'],
   }
 
