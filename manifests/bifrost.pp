@@ -27,7 +27,6 @@ class infracloud::bifrost (
   $dhcp_pool_end = '10.10.16.190',
   $dhcp_static_mask = '255.255.255.0',
   $network_interface = 'eth2',
-  $ipv4_gateway = '15.184.64.1',
   $ipv4_nameserver = '8.8.8.8',
   $ipv4_subnet_mask = '255.255.224.0',
   $dib_dev_user_password = undef,
