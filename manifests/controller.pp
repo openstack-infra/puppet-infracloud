@@ -21,6 +21,7 @@ class infracloud::controller(
   $ssl_key_file_contents,
   $ssl_cert_file_contents,
   $controller_public_address = $::fqdn,
+  $mysql_max_connections = 1024,
   $openstack_release = 'mitaka',
 ) {
 
@@ -91,7 +92,7 @@ class infracloud::controller(
     root_password    => $root_mysql_password,
     override_options => {
       'mysqld' => {
-        'max_connections' => '1024',
+        'max_connections' => $mysql_max_connections,
       }
     }
   }
