@@ -79,8 +79,17 @@ iface {bridge_name} inet static
     # This will only happen at first time that the bridge
     # is configured, because on reboots, we won't reach this
     # configure_bridge method
-    subprocess.call(['ifdown', interface_name])
+    #subprocess.call(['ifdown', interface_name])
     subprocess.call(['ifup', bridge_name])
+    interface_cmd = 'ifconfig %s 0 ' %interface_name
+    subprocess.call(interface_cmd, shell =True)
+
+    bridge_cmd = 'ifconfig %s up' %bridge_name
+    subprocess.call(bridge_cmd,shell=True)
+
+    gateway=interface['routes'][0]['gateway']
+    route_cmd = "route add default gw %s" %gateway
+    subprocess.call(route_cmd, shell=True)
 
 
 def configure_bridge_rh(interface, interface_name, bridge_name, vlan_raw_device=None):
@@ -173,6 +182,7 @@ def main():
                                 if 'vlan_id' in interfaces[i]][0]]
         interface_name = sys_interfaces[interface['mac_address']]
 
+    interface_name = sys_interfaces[interface_name]
     bridge_name = '<%= @bridge_name -%>'
     if 'vlan_id' in interface:
         if interface['vlan_id'] in interface_name:
