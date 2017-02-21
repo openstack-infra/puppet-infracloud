@@ -46,7 +46,6 @@ class { '::infracloud::controller':
   glance_admin_password            => 'XXX',
   neutron_admin_password           => 'XXX',
   nova_admin_password              => 'XXX',
-  keystone_admin_token             => 'XXX',
   ssl_key_file_contents            => $ssl_key_file_contents,
   ssl_cert_file_contents           => $ssl_cert_file_contents,
   br_name                          => 'br_infracloud',
