@@ -13,8 +13,9 @@ keystone_admin_password: XXX
 glance_admin_password: XXX
 neutron_admin_password: XXX
 nova_admin_password: XXX
-keystone_admin_token: XXX
 openstackci_infracloud_password: XXX
+# TODO(emilien) remove admin_token in Pike
+keystone_admin_token: XXX
 openstackjenkins_infracloud_password: XXX
 # subject=/C=US/ST=Some-State/O=OpenStack Infra Fake Cert/CN=controller00.hpuswest.ic.openstack.org
 ssl_key_file_contents: |
