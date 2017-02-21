@@ -13,6 +13,7 @@ keystone_admin_password: XXX
 glance_admin_password: XXX
 neutron_admin_password: XXX
 nova_admin_password: XXX
+# TODO(emilien) remove admin_token in Pike
 keystone_admin_token: XXX
 openstackci_infracloud_password: XXX
 openstackjenkins_infracloud_password: XXX

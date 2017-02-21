@@ -136,23 +136,36 @@ class infracloud::controller(
   }
 
   # keystone.conf
-  class { '::keystone':
-    database_connection => "mysql://keystone:${keystone_mysql_password}@127.0.0.1/keystone",
-    catalog_type        => 'sql',
-    admin_token         => $keystone_admin_token,
-    service_name        => 'httpd',
-    enable_ssl          => true,
-    admin_bind_host     => $controller_public_address,
-    rabbit_userid       => 'keystone',
-    rabbit_password     => $keystone_rabbit_password,
-    rabbit_host         => $controller_public_address,
-    rabbit_port         => '5671',
-    rabbit_use_ssl      => true,
-    # Hack to work around a bug in the puppet module
-    # https://review.openstack.org/#/c/280462/
-    kombu_ssl_ca_certs  => [],
-    kombu_ssl_certfile  => [],
-    kombu_ssl_keyfile   => [],
+  # Remove this block when we switch infracloud to Ocata.
+  if $openstack_release == 'ocata' {
+    class { '::keystone':
+      database_connection => "mysql://keystone:${keystone_mysql_password}@127.0.0.1/keystone",
+      catalog_type        => 'sql',
+      admin_token         => $keystone_admin_token,
+      admin_password      => $keystone_admin_password,
+      service_name        => 'httpd',
+      enable_ssl          => true,
+      admin_bind_host     => $controller_public_address,
+      rabbit_userid       => 'keystone',
+      rabbit_password     => $keystone_rabbit_password,
+      rabbit_host         => $controller_public_address,
+      rabbit_port         => '5671',
+      rabbit_use_ssl      => true,
+    }
+  } else {
+    class { '::keystone':
+      database_connection => "mysql://keystone:${keystone_mysql_password}@127.0.0.1/keystone",
+      catalog_type        => 'sql',
+      admin_token         => $keystone_admin_token,
+      service_name        => 'httpd',
+      enable_ssl          => true,
+      admin_bind_host     => $controller_public_address,
+      rabbit_userid       => 'keystone',
+      rabbit_password     => $keystone_rabbit_password,
+      rabbit_host         => $controller_public_address,
+      rabbit_port         => '5671',
+      rabbit_use_ssl      => true,
+    }
   }
 
   # keystone admin user, projects
@@ -162,10 +175,19 @@ class infracloud::controller(
   }
 
   # keystone auth endpoints
-  class { '::keystone::endpoint':
-    public_url => $keystone_auth_uri,
-    admin_url  => $keystone_admin_uri,
-    version    => '',
+  # Remove this block when we switch infracloud to Ocata.
+  if $openstack_release == 'ocata' {
+    class { '::keystone::endpoint':
+      default_domain => 'Default',
+      public_url     => $keystone_auth_uri,
+      admin_url      => $keystone_admin_uri,
+    }
+  } else {
+    class { '::keystone::endpoint':
+      public_url     => $keystone_auth_uri,
+      admin_url      => $keystone_admin_uri,
+      version        => ''
+    }
   }
 
   # apache server
@@ -202,29 +224,50 @@ class infracloud::controller(
     password => $glance_mysql_password,
   }
 
-  # glance-api.conf
-  class { '::glance::api':
-    database_connection => $glance_database_connection,
-    keystone_password   => $glance_admin_password,
-    auth_uri            => $keystone_auth_uri,
-    identity_uri        => $keystone_admin_uri,
-    cert_file           => $ssl_cert_path,
-    key_file            => "/etc/glance/ssl/private/${controller_public_address}.pem",
-    subscribe           => Class['::infracloud::cacert'],
+  # Remove this block when we switch infracloud to Ocata.
+  if $openstack_release == 'ocata' {
+    class { '::glance::api::authtoken':
+      password            => $glance_admin_password,
+      project_domain_name => 'Default',
+      user_domain_name    => 'Default',
+      auth_uri            => $keystone_auth_uri,
+      auth_url            => $keystone_admin_uri,
+    }
+    # glance-api.conf
+    class { '::glance::api':
+      database_connection => $glance_database_connection,
+      cert_file           => $ssl_cert_path,
+      enable_v1_api       => false,
+      enable_v2_api       => true,
+      default_store       => ['file'],
+      stores              => ['file'],
+      key_file            => "/etc/glance/ssl/private/${controller_public_address}.pem",
+      subscribe           => Class['::infracloud::cacert'],
+    }
+  } else {
+    # glance-api.conf
+    class { '::glance::api':
+      database_connection => $glance_database_connection,
+      keystone_password   => $glance_admin_password,
+      auth_uri            => $keystone_auth_uri,
+      identity_uri        => $keystone_admin_uri,
+      cert_file           => $ssl_cert_path,
+      key_file            => "/etc/glance/ssl/private/${controller_public_address}.pem",
+      subscribe           => Class['::infracloud::cacert'],
+    }
+    # glance-registry.conf
+    class { '::glance::registry':
+      database_connection => $glance_database_connection,
+      keystone_password   => $glance_admin_password,
+      auth_uri            => $keystone_auth_uri,
+      identity_uri        => $keystone_admin_uri,
+    }
   }
 
   infracloud::ssl_key { 'glance':
     key_content => $ssl_key_file_contents,
     notify      => Service[$::glance::params::api_service_name],
     require     => Package[$::glance::params::api_package_name],
-  }
-
-  # glance-registry.conf
-  class { '::glance::registry':
-    database_connection => $glance_database_connection,
-    keystone_password   => $glance_admin_password,
-    auth_uri            => $keystone_auth_uri,
-    identity_uri        => $keystone_admin_uri,
   }
 
   # set filesystem_store_datadir to /var/lib/glance/images in glance-api.conf
@@ -257,7 +300,6 @@ class infracloud::controller(
   # neutron.conf
   class { '::neutron':
     core_plugin     => 'ml2',
-    enabled         => true,
     rabbit_user     => 'neutron',
     rabbit_password => $neutron_rabbit_password,
     rabbit_host     => $controller_public_address,
@@ -267,6 +309,42 @@ class infracloud::controller(
     cert_file       => $ssl_cert_path,
     key_file        => "/etc/neutron/ssl/private/${controller_public_address}.pem",
     subscribe       => Class['::infracloud::cacert'],
+  }
+
+  # Remove this block when we switch infracloud to Ocata.
+  if $openstack_release == 'ocata' {
+    $interface_driver = 'linuxbridge'
+    class { '::neutron::keystone::authtoken':
+      password            => $neutron_admin_password,
+      project_domain_name => 'Default',
+      user_domain_name    => 'Default',
+      auth_uri            => $keystone_auth_uri,
+      auth_url            => $keystone_admin_uri,
+    }
+    # neutron-server service and related neutron.conf and api-paste.conf params
+    class { '::neutron::server':
+      password            => $neutron_admin_password,
+      database_connection => "mysql://neutron:${neutron_mysql_password}@127.0.0.1/neutron?charset=utf8",
+      sync_db             => true,
+    }
+  } else {
+    $interface_driver = 'neutron.agent.linux.interface.BridgeInterfaceDriver'
+    # neutron-server service and related neutron.conf and api-paste.conf params
+    class { '::neutron::server':
+      password            => $neutron_admin_password,
+      database_connection => "mysql://neutron:${neutron_mysql_password}@127.0.0.1/neutron?charset=utf8",
+      sync_db             => true,
+      auth_uri            => $keystone_auth_uri,
+      auth_url            => $keystone_admin_uri,
+    }
+    # Fix for https://bugs.launchpad.net/ubuntu/+source/neutron/+bug/1453188
+    file { '/usr/bin/neutron-plugin-linuxbridge-agent':
+      ensure => link,
+      target => '/usr/bin/neutron-linuxbridge-agent',
+      before => Package['neutron-plugin-linuxbridge-agent'],
+    }
+    # Fix to make sure linuxbridge-agent can reach rabbit after moving it
+    Neutron_config['oslo_messaging_rabbit/rabbit_hosts'] ~> Service['neutron-plugin-linuxbridge-agent']
   }
 
   infracloud::ssl_key { 'neutron':
@@ -280,15 +358,6 @@ class infracloud::controller(
     password   => $neutron_admin_password,
     public_url => "https://${controller_public_address}:9696/",
     admin_url  => "https://${controller_public_address}:9696/",
-  }
-
-  # neutron-server service and related neutron.conf and api-paste.conf params
-  class { '::neutron::server':
-    password            => $neutron_admin_password,
-    database_connection => "mysql://neutron:${neutron_mysql_password}@127.0.0.1/neutron?charset=utf8",
-    sync_db             => true,
-    auth_uri            => $keystone_auth_uri,
-    auth_url            => $keystone_admin_uri,
   }
 
   # neutron client package
@@ -313,19 +382,9 @@ class infracloud::controller(
     physical_interface_mappings => ['provider:veth2'],
     require                     => Class['infracloud::veth'],
   }
-  # Fix for https://bugs.launchpad.net/ubuntu/+source/neutron/+bug/1453188
-  file { '/usr/bin/neutron-plugin-linuxbridge-agent':
-    ensure => link,
-    target => '/usr/bin/neutron-linuxbridge-agent',
-    before => Package['neutron-plugin-linuxbridge-agent'],
-  }
-  # Fix to make sure linuxbridge-agent can reach rabbit after moving it
-  Neutron_config['oslo_messaging_rabbit/rabbit_hosts'] ~> Service['neutron-plugin-linuxbridge-agent']
 
-  # DHCP
   class { '::neutron::agents::dhcp':
-    interface_driver       => 'neutron.agent.linux.interface.BridgeInterfaceDriver',
-    dhcp_delete_namespaces => true,
+    interface_driver => $interface_driver,
   }
 
   # Provider network
@@ -346,10 +405,85 @@ class infracloud::controller(
 
   ### Nova ###
 
-  class { '::nova::db':
-    database_connection     => "mysql://nova:${nova_mysql_password}@127.0.0.1/nova?charset=utf8",
-    api_database_connection => "mysql://nova_api:${nova_mysql_password}@127.0.0.1/nova_api?charset=utf8"
+  # Remove this block when we switch infracloud to Ocata.
+  if $openstack_release == 'ocata' {
+    class { '::nova::db':
+      database_connection           => "mysql://nova:${nova_mysql_password}@127.0.0.1/nova?charset=utf8",
+      api_database_connection       => "mysql://nova_api:${nova_mysql_password}@127.0.0.1/nova_api?charset=utf8",
+      placement_database_connection => "mysql://nova_placement:${nova_mysql_password}@127.0.0.1/nova_placement?charset=utf8",
+    }
+    class { '::nova::db::mysql_placement':
+      password => $nova_mysql_password,
+      host     => '127.0.0.1',
+    }
+    include ::nova::cell_v2::simple_setup
+    class { '::nova::keystone::authtoken':
+      password            => $nova_admin_password,
+      project_domain_name => 'Default',
+      user_domain_name    => 'Default',
+      auth_uri            => $keystone_auth_uri,
+      auth_url            => $keystone_admin_uri,
+    }
+    class { '::nova::keystone::auth_placement':
+      password   => $nova_admin_password,
+      public_url => "https://${controller_public_address}:8778/placement",
+      admin_url  => "https://${controller_public_address}:8778/placement",
+    }
+    # keystone user, role, service, endpoints for nova service
+    class { '::nova::keystone::auth':
+      password   => $nova_admin_password,
+      public_url => "https://${controller_public_address}:8774/v2.1",
+      admin_url  => "https://${controller_public_address}:8774/v2.1",
+    }
+    class { '::nova::wsgi::apache_placement':
+      api_port => '8778',
+      ssl_key  => "/etc/nova/ssl/private/${controller_public_address}.pem",
+      ssl_cert => $ssl_cert_path,
+      ssl      => true,
+    }
+    class { '::nova::placement':
+      auth_url => $keystone_admin_uri,
+      password => $nova_admin_password,
+    }
+    # nova.conf neutron credentials
+    class { '::nova::network::neutron':
+      neutron_auth_url => "${keystone_admin_uri}/v3",
+      neutron_password => $neutron_admin_password,
+      neutron_url      => "https://${controller_public_address}:9696",
+    }
+    # api service and endpoint-related params in nova.conf
+    class { '::nova::api':
+      enabled_apis => 'osapi_compute',
+    }
+  } else {
+    class { '::nova::db':
+      database_connection     => "mysql://nova:${nova_mysql_password}@127.0.0.1/nova?charset=utf8",
+      api_database_connection => "mysql://nova_api:${nova_mysql_password}@127.0.0.1/nova_api?charset=utf8",
+    }
+    # keystone user, role, service, endpoints for nova service
+    class { '::nova::keystone::auth':
+      password               => $nova_admin_password,
+      public_url             => "https://${controller_public_address}:8774/v2/%(tenant_id)s",
+      admin_url              => "https://${controller_public_address}:8774/v2/%(tenant_id)s",
+      configure_ec2_endpoint => false,
+      configure_endpoint_v3  => false,
+    }
+    # nova.conf neutron credentials
+    class { '::nova::network::neutron':
+      neutron_auth_url    => $keystone_admin_uri,
+      neutron_password    => $neutron_admin_password,
+      neutron_auth_plugin => 'password',
+      neutron_url         => "https://${controller_public_address}:9696",
+    }
+    # api service and endpoint-related params in nova.conf
+    class { '::nova::api':
+      enabled_apis   => 'osapi_compute',
+      admin_password => $nova_admin_password,
+      auth_uri       => $keystone_auth_uri,
+      identity_uri   => $keystone_admin_uri,
+    }
   }
+
   class { '::nova::db::mysql':
     password => $nova_mysql_password,
     host     => '127.0.0.1',
@@ -382,43 +516,12 @@ class infracloud::controller(
     require     => Class['::nova'],
   }
 
-  # keystone user, role, service, endpoints for nova service
-  class { '::nova::keystone::auth':
-    password               => $nova_admin_password,
-    public_url             => "https://${controller_public_address}:8774/v2/%(tenant_id)s",
-    admin_url              => "https://${controller_public_address}:8774/v2/%(tenant_id)s",
-    configure_ec2_endpoint => false,
-    configure_endpoint_v3  => false,
-  }
-
-  # nova.conf neutron credentials
-  class { '::nova::network::neutron':
-    neutron_auth_url    => $keystone_admin_uri,
-    neutron_password    => $neutron_admin_password,
-    neutron_auth_plugin => 'password',
-    neutron_url         => "https://${controller_public_address}:9696",
-  }
-
-  # api service and endpoint-related params in nova.conf
-  class { '::nova::api':
-    enabled        => true,
-    enabled_apis   => 'osapi_compute',
-    admin_password => $nova_admin_password,
-    auth_uri       => $keystone_auth_uri,
-    identity_uri   => $keystone_admin_uri,
-    osapi_v3       => false,
-  }
-
   # conductor service
-  class { '::nova::conductor':
-    enabled => true,
-  }
+  include ::nova::conductor
 
   # scheduler service
-  class { '::nova::scheduler':
-    enabled => true,
-  }
+  include ::nova::scheduler
 
   ### Logging ###
-  class { '::infracloud::logs': }
+  include ::infracloud::logs
 }
