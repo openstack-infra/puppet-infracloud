@@ -4,6 +4,7 @@ class infracloud::compute(
   $br_name,
   $controller_public_address,
   $neutron_admin_password,
+  $nova_admin_password,
   $neutron_rabbit_password,
   $nova_rabbit_password,
   $ssl_cert_file_contents,
@@ -11,6 +12,9 @@ class infracloud::compute(
   $virt_type = 'kvm',
   $openstack_release = 'mitaka',
 ) {
+
+  $keystone_auth_uri = "https://${controller_public_address}:5000"
+  $keystone_admin_uri = "https://${controller_public_address}:35357"
 
   include ::infracloud::params
   $ssl_cert_path = "${::infracloud::params::cert_path}/openstack_infra_ca.crt"
@@ -78,6 +82,10 @@ class infracloud::compute(
     cert_file          => $ssl_cert_path,
     key_file           => "/etc/nova/ssl/private/${controller_public_address}.pem",
   }
+  class { '::nova::placement':
+    auth_url => $keystone_admin_uri,
+    password => $nova_admin_password,
+  }
 
   file { '/etc/nova/ssl':
     ensure  => directory,
@@ -101,16 +109,14 @@ class infracloud::compute(
 
   # nova-compute service
   class { '::nova::compute':
-    enabled          => true,
     force_raw_images => false,
   }
 
   # nova.conf neutron credentials
   class { '::nova::network::neutron':
-    neutron_url         => "https://${controller_public_address}:9696",
-    neutron_auth_url    => "https://${controller_public_address}:35357",
-    neutron_auth_plugin => 'password',
-    neutron_password    => $neutron_admin_password,
+    neutron_url      => "https://${controller_public_address}:9696",
+    neutron_auth_url => "${keystone_admin_uri}/v3",
+    neutron_password => $neutron_admin_password,
   }
 
   # Libvirt parameters
@@ -132,7 +138,6 @@ class infracloud::compute(
   # neutron.conf
   class { '::neutron':
     core_plugin     => 'ml2',
-    enabled         => true,
     rabbit_user     => 'neutron',
     rabbit_password => $neutron_rabbit_password,
     rabbit_host     => $controller_public_address,
@@ -148,12 +153,4 @@ class infracloud::compute(
     physical_interface_mappings => ['provider:veth2'],
     require                     => Class['infracloud::veth'],
   }
-  # Fix for https://bugs.launchpad.net/ubuntu/+source/neutron/+bug/1453188
-  file { '/usr/bin/neutron-plugin-linuxbridge-agent':
-    ensure => link,
-    target => '/usr/bin/neutron-linuxbridge-agent',
-    before => Package['neutron-plugin-linuxbridge-agent'],
-  }
-  # Fix to make sure linuxbridge-agent can reach rabbit after moving it
-  Neutron_config['oslo_messaging_rabbit/rabbit_hosts'] ~> Service['neutron-plugin-linuxbridge-agent']
 }
