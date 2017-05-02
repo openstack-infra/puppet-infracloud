@@ -22,10 +22,10 @@ class infracloud::cacert (
   }
 
   exec { 'update-ca-certificates':
-    command       => $::infracloud::params::cert_command,
-    subscribe     => [
-        File["${::infracloud::params::cert_path}/openstack_infra_ca.crt"],
-      ],
-      refreshonly => true,
+    command     => $::infracloud::params::cert_command,
+    subscribe   => [
+      File["${::infracloud::params::cert_path}/openstack_infra_ca.crt"],
+    ],
+    refreshonly => true,
   }
 }
