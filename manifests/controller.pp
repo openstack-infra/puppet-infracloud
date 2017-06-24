@@ -112,6 +112,11 @@ class infracloud::controller(
     require     => Package['rabbitmq-server'],
   }
 
+  if versioncmp($::operatingsystemmajrelease, '16.04') >= 0 {
+    $repo_ensure = false
+  } else {
+    $repo_ensure = true
+  }
   class { '::rabbitmq':
     delete_guest_user     => true,
     environment_variables => {
@@ -122,6 +127,7 @@ class infracloud::controller(
     ssl_cacert            => $ssl_cert_path,
     ssl_cert              => $ssl_cert_path,
     ssl_key               => "/etc/rabbitmq/ssl/private/${controller_public_address}.pem",
+    repo_ensure           => $repo_ensure,
     require               => File[$ssl_cert_path],
   }
 
