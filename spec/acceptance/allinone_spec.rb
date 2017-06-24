@@ -11,11 +11,12 @@ describe 'allinone', :if => os[:family] == 'ubuntu' do
   before :all do
     # set up bridge
     shell('apt-get install -y vlan bridge-utils')
-    shell('echo -e "auto eth0.2\niface eth0.2 inet manual\n" >> /etc/network/interfaces')
+    iface = shell('ls /sys/class/net/ | grep -v lo').stdout
+    shell("echo -e 'auto #{iface}.2\\niface #{iface}.2 inet manual\\n' >> /etc/network/interfaces")
     shell('modprobe 8021q')
-    shell('ifup eth0.2')
+    shell("ifup #{iface}.2")
     shell('brctl addbr br_infracloud')
-    shell('brctl addif br_infracloud eth0.2')
+    shell("brctl addif br_infracloud #{iface}.2")
     shell('ip addr add 10.1.0.42/255.255.240.0 dev br_infracloud')
     shell('ip link set dev br_infracloud up')
 
