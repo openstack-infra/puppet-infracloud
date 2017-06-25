@@ -1,6 +1,6 @@
 require 'spec_helper_acceptance'
 
-describe 'allinone', :if => os[:family] == 'ubuntu' do
+describe 'allinone', :if => os[:family] == 'ubuntu' && os[:distro][:codename] != 'xenial' do
 
   fixtures_path = File.join(File.dirname(__FILE__), 'fixtures')
   controller_path = File.join(fixtures_path, 'allinone_controller.pp')
