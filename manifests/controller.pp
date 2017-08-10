@@ -340,7 +340,6 @@ class infracloud::controller(
     cidr             => $neutron_subnet_cidr,
     gateway_ip       => $neutron_subnet_gateway,
     network_name     => 'public',
-    dns_nameservers  => ['8.8.8.8', ],
     allocation_pools => $neutron_subnet_allocation_pools,
   }
 
