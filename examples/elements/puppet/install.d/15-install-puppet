@@ -1,6 +1,0 @@
-#!/bin/bash
-
-set -x
-
-/opt/system-config/production/install_puppet.sh
-/opt/system-config/production/install_modules.sh

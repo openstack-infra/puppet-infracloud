@@ -1,2 +1,0 @@
-SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="52:54:00:04:24:dc", KERNEL=="eth*", DRIVERS=="?*", ATTR{dev_id}=="0x0", ATTR{type}=="1", NAME="eth2"
-SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="52:54:00:3d:68:45", KERNEL=="eth*", DRIVERS=="?*", ATTR{dev_id}=="0x0", ATTR{type}=="1", NAME="eth2"
